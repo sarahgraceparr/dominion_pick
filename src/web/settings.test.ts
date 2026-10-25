@@ -48,7 +48,14 @@ describe('share URLs', () => {
   it('round-trips through the query string', () => {
     const state = {
       seed: 'abc',
-      settings: { products: ['base2', 'intrigue2'], landscapes: 2, attacks: 'some' as const, allowComplex: false, maxProducts: 2 },
+      settings: {
+        products: ['base2', 'intrigue2'],
+        landscapes: 2,
+        attacks: 'some' as const,
+        allowComplex: false,
+        maxProducts: 2,
+        emphasis: ['attacks' as const, 'fatDeck' as const],
+      },
       locked: ['village'],
       banned: ['witch'],
       surprise: true,

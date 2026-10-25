@@ -78,6 +78,7 @@ export const MECHANICS = [
   'victoryRemodel', // trashes a Victory card to gain a better one (Rebuild)
   'durationPayoff', // rewards gaining or having Durations (Sailor)
   'onGainAction', // rewards gaining Action cards (Collection, Academy)
+  'drawToX', // draws until you have a number of cards (Library, Watchtower)
 ] as const;
 
 export type Mechanic = (typeof MECHANICS)[number];

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { database, getCard } from './cards';
+import { EMPHASES } from './emphasis';
 
 const productIds = new Set(database.products.map((p) => p.id));
 const cardId = z
@@ -36,6 +37,8 @@ export const generateRequestSchema = z
     maxProducts: z.number().int().min(0).max(10).default(0),
     /** favour rule-bending landscapes and unusual combos */
     surprise: z.boolean().default(false),
+    /** play styles to emphasise */
+    emphasis: z.array(z.enum(EMPHASES)).max(EMPHASES.length).default([]),
     locked: z.array(cardId).max(14).default([]),
     banned: z.array(cardId).max(300).default([]),
   })

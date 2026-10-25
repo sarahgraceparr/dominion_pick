@@ -67,6 +67,22 @@ This benchmark drove several rules:
 
 A test fails if the median recommended kingdom drops below the 68th percentile.
 
+### Emphasize
+
+Under **Your sets & options → Emphasize**, players can ask for one or more play styles (`src/core/emphasis.ts`):
+
+| Style                    | What changes                                                                                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| More attacks             | No penalties for several attacks or cursers; rewards attacks, defenses, and attack-proof cards (Fortress shrugs off trashing attacks, Library refills a hand Militia cut down) |
+| Extra turns              | Outpost, Voyage, Seize the Day…, plus Durations that pay out on the extra turn                                                                                                 |
+| Engines & draw           | Villages, draw and +Buy; penalises boards without villages                                                                                                                     |
+| Big Money                | Strong terminal draw and good Treasures                                                                                                                                        |
+| Trashing                 | Trashers and the cards that reward trashing                                                                                                                                    |
+| Night & tricky Treasures | Night cards, and Treasures that do more than make money                                                                                                                        |
+| Gainers & fat decks      | Gainers, +Buy and alt-VP like Gardens; no penalty for several Victory piles                                                                                                    |
+
+Each style seeds most candidate kingdoms with a matching card, so even rare mechanics such as extra turns reliably appear. It also adds its own score component.
+
 ### Surprise me
 
 **✨ Surprise me** uses at least two landscapes, allows complex mechanics, doubles the bonus for chains that run through landscapes, and rewards unusual card types (Night, Reserve, Traits, Ways, Projects, Omens…).

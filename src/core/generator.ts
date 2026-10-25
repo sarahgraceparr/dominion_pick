@@ -4,6 +4,7 @@ import { generateRequestSchema, type GenerateRequestInput } from './schema';
 import { scoreKingdom, type ScoreOptions } from './scoring';
 import { buildSetup, type SetupResult } from './setup';
 import { findSynergies } from './synergy';
+import { EMPHASIS_RULES, type Emphasis } from './emphasis';
 import type { Card, Kingdom, ScoreBreakdown, Synergy } from './types';
 
 export const KINGDOM_SIZE = 10;
@@ -59,14 +60,15 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
   const candidates: Candidate[] = [];
   for (let i = 0; i < CANDIDATES; i++) {
     const pool = restrictFamilies(kingdomPool, lockedKingdom, req.maxProducts, rng);
-    const cards = drawKingdom(pool, lockedKingdom, req.attacks, rng);
+    const cards = drawKingdom(pool, [...lockedKingdom, ...seedEmphasis(pool, lockedKingdom, req.emphasis, rng)], req.attacks, rng);
     if (!cards) continue;
     const families = new Set(cards.flatMap((c) => c.products.map(productFamily)));
     const landscapes = [
       ...lockedLandscapes,
-      ...rng
-        .shuffle(landscapePool.filter((l) => req.maxProducts === 0 || l.products.some((p) => families.has(productFamily(p)))))
-        .slice(0, landscapeCount - lockedLandscapes.length),
+      ...preferMatching(
+        rng.shuffle(landscapePool.filter((l) => req.maxProducts === 0 || l.products.some((p) => families.has(productFamily(p))))),
+        req.emphasis,
+      ).slice(0, landscapeCount - lockedLandscapes.length),
     ];
     // Setup is decided per candidate because it changes how cards interact:
     // Shelters put Necropolis in every deck, Traits sit on specific piles.
@@ -75,7 +77,7 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
       { kingdom: cards, landscapes, unusedKingdom: kingdomPool.filter((c) => !used.has(c)), allies, prophecies },
       rng,
     );
-    const { synergies, score } = evaluateKingdom({ cards, landscapes, ...setup }, { surprise: req.surprise });
+    const { synergies, score } = evaluateKingdom({ cards, landscapes, ...setup }, { surprise: req.surprise, emphasis: req.emphasis });
     candidates.push({ cards, landscapes, setup, synergies, score });
   }
   if (candidates.length === 0) {
@@ -113,6 +115,30 @@ export function evaluateKingdom(layout: KingdomLayout, options: ScoreOptions = {
   return { synergies, score: scoreKingdom(cards, landscapes, synergies, options) };
 }
 
+/** Chance that a candidate is seeded with a card for each emphasised style. */
+const EMPHASIS_SEED_CHANCE = 0.8;
+
+/**
+ * Seeds a candidate with cards matching the emphasised styles, so styles
+ * built on rare cards (extra turns, Night) actually show up among the candidates.
+ */
+function seedEmphasis(pool: Card[], locked: Card[], emphasis: readonly Emphasis[], rng: Rng): Card[] {
+  const seeded: Card[] = [];
+  for (const e of emphasis) {
+    if (rng.next() >= EMPHASIS_SEED_CHANCE) continue;
+    const taken = new Set([...locked, ...seeded]);
+    const matching = pool.filter((c) => !taken.has(c) && EMPHASIS_RULES[e].matches(c));
+    if (matching.length && locked.length + seeded.length < KINGDOM_SIZE) seeded.push(rng.pick(matching));
+  }
+  return seeded;
+}
+
+/** Moves landscapes that match an emphasised style to the front, keeping the shuffled order otherwise. */
+function preferMatching(cards: Card[], emphasis: readonly Emphasis[]): Card[] {
+  const matches = (c: Card) => emphasis.some((e) => EMPHASIS_RULES[e].matches(c));
+  return [...cards.filter(matches), ...cards.filter((c) => !matches(c))];
+}
+
 function restrictFamilies(pool: Card[], locked: Card[], maxProducts: number, rng: Rng): Card[] {
   if (maxProducts === 0) return pool;
   const families = [...new Set(pool.flatMap((c) => c.products.map(productFamily)))];
@@ -130,6 +156,7 @@ function drawKingdom(pool: Card[], locked: Card[], attacks: 'none' | 'some' | 'a
   let attackCount = cards.filter((c) => c.tags.includes('attack')).length;
   for (const card of rng.shuffle(pool)) {
     if (cards.length >= KINGDOM_SIZE) break;
+    if (cards.includes(card)) continue; // already seeded
     const isAttack = card.tags.includes('attack');
     if (attacks === 'some' && isAttack && attackCount >= MAX_ATTACKS_FOR_SOME) continue;
     cards.push(card);

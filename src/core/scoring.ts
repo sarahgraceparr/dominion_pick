@@ -1,3 +1,4 @@
+import { EMPHASIS_RULES, type Emphasis } from './emphasis';
 import type { Card, ScoreBreakdown, Synergy, Tag } from './types';
 
 /** Roles that make a board interesting; more of them means more decisions. */
@@ -45,6 +46,8 @@ const isPureVictory = (c: Card) => c.types.includes('Victory') && !c.types.inclu
 export interface ScoreOptions {
   /** favour rule-bending landscapes, unusual card types and chains through landscapes */
   surprise?: boolean;
+  /** play styles the player asked to emphasise */
+  emphasis?: readonly Emphasis[];
 }
 
 /**
@@ -141,13 +144,17 @@ export function scoreKingdom(
   // Interaction: one attack is welcome; the designers rarely use three or more.
   const sharedTrash = kingdom.some((c) => c.mechanics.includes('fromTrash'));
   if (attacks > 0 || sharedTrash) add('Player interaction', 5);
-  if (cursers >= 2) add('Stacked cursers', -6);
-  else if (cursers === 1 && trashers === 0 && defenses === 0) add('Curses with no way to clean up', -6);
-  if (attacks >= 3) add('Too many attacks', -8);
-  else if (attacks === 2) add('Two attacks', -2);
+  const emphasis = new Set(options.emphasis ?? []);
+  // Players who ask for attacks get them without the usual penalties.
+  if (!emphasis.has('attacks')) {
+    if (cursers >= 2) add('Stacked cursers', -6);
+    else if (cursers === 1 && trashers === 0 && defenses === 0) add('Curses with no way to clean up', -6);
+    if (attacks >= 3) add('Too many attacks', -8);
+    else if (attacks === 2) add('Two attacks', -2);
+  }
 
   // Lopsided boards.
-  if (pureVictory >= 2) add('Several Victory piles', -3);
+  if (pureVictory >= 2 && !emphasis.has('fatDeck')) add('Several Victory piles', -3);
   if (villages >= 3 && draw === 0) add('Villages with nothing to draw', -6);
   if (terminalDraw >= 3 && villages === 0) add('Terminal draw with no villages', -4);
   if (villages > 0) add('Villages available', 5);
@@ -160,6 +167,8 @@ export function scoreKingdom(
   const unusual = new Set(all.flatMap((c) => c.types.filter((t) => UNUSUAL_TYPES.includes(t))));
   if (options.surprise) add('Unusual mechanics', Math.min(unusual.size * 2, 12));
   else add('Distinctive mechanics', Math.min(unusual.size, 3) * 1.5);
+
+  for (const e of emphasis) add(`Emphasis: ${EMPHASIS_RULES[e].label}`, EMPHASIS_RULES[e].score(kingdom, all, synergies));
 
   const total = Math.round(parts.reduce((s, p) => s + p.value, 0));
   return { total, parts, archetypes: strategies.length ? strategies : ['Money'] };

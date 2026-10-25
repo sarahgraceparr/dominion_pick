@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { allProducts, type AttackPreference } from '../../core';
+import { allProducts, EMPHASES, EMPHASIS_RULES, type AttackPreference, type Emphasis } from '../../core';
 import type { Settings } from '../settings';
 
 interface Props {
@@ -23,6 +23,9 @@ export function SettingsPanel({ settings, onChange, defaultOpen = false }: Props
       products.filter((p) => next.has(p.id)).map((p) => p.id),
     );
   };
+
+  const toggleEmphasis = (e: Emphasis) =>
+    set('emphasis', settings.emphasis.includes(e) ? settings.emphasis.filter((x) => x !== e) : [...settings.emphasis, e]);
 
   return (
     <details className="settings" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
@@ -97,6 +100,18 @@ export function SettingsPanel({ settings, onChange, defaultOpen = false }: Props
           <span>Allow complex mechanics (Potions, Debt, Night…)</span>
         </label>
       </div>
+
+      <fieldset className="emphasis">
+        <legend>Emphasize</legend>
+        <div className="toggle-chips">
+          {EMPHASES.map((e) => (
+            <label key={e} className="toggle-chip">
+              <input type="checkbox" checked={settings.emphasis.includes(e)} onChange={() => toggleEmphasis(e)} />
+              <span>{EMPHASIS_RULES[e].label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
     </details>
   );
 }

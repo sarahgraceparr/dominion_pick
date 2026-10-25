@@ -3391,7 +3391,9 @@
     "draw",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "drawToX"
+   ]
   },
   {
    "id": "cutpurse",
@@ -4778,7 +4780,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "drawToX"
+   ]
   },
   {
    "id": "fisherman",
@@ -6897,6 +6901,7 @@
     "trasher"
    ],
    "mechanics": [
+    "drawToX",
     "gainTreasure",
     "trashAny"
    ]
@@ -7409,7 +7414,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "drawToX"
+   ]
   },
   {
    "id": "lighthouse",
@@ -10644,7 +10651,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "drawToX"
+   ]
   },
   {
    "id": "root-cellar",
@@ -11905,6 +11914,7 @@
     "trasher"
    ],
    "mechanics": [
+    "drawToX",
     "trashAction"
    ]
   },
@@ -13065,6 +13075,7 @@
     "gainer"
    ],
    "mechanics": [
+    "drawToX",
     "gainTreasure"
    ]
   },
@@ -13986,6 +13997,7 @@
     "terminal"
    ],
    "mechanics": [
+    "drawToX",
     "topdeckSetup"
    ]
   },
@@ -14200,7 +14212,9 @@
    "tags": [
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "drawToX"
+   ]
   },
   {
    "id": "way-of-the-ox",

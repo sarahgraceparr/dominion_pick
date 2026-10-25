@@ -97,4 +97,16 @@ describe('App', () => {
     expect(screen.getByText('✨ Surprise')).toBeInTheDocument();
     expect(within(screen.getByRole('list', { name: 'Landscapes' })).getAllByTestId('card').length).toBeGreaterThanOrEqual(2);
   });
+
+  it('emphasised styles are saved, sent with the pick and kept in the share link', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await waitFor(() => expect(cards()).toHaveLength(10));
+    await user.click(screen.getByRole('checkbox', { name: 'More attacks' }));
+    await user.click(screen.getByRole('checkbox', { name: 'Gainers & fat decks' }));
+    await user.click(screen.getByRole('button', { name: 'Pick a kingdom' }));
+    expect(currentState().settings.emphasis).toEqual(['attacks', 'fatDeck']);
+    expect(JSON.parse(localStorage.getItem('dominion-pick:settings:v1')!).emphasis).toEqual(['attacks', 'fatDeck']);
+    expect(screen.getByText('Emphasis: More attacks')).toBeInTheDocument();
+  });
 });

@@ -103,6 +103,18 @@ const RULES: Rule[] = [
     m(a, 'gainAttack') && b.tags.includes('attack') && b.kind === 'kingdom'
       ? { text: `trashing ${a.name} gains you a ${b.name}`, weight: 1 }
       : undefined,
+  // Attack-proof cards.
+  (a, b) =>
+    a.tags.includes('attackDeck') && m(b, 'onTrashSelf') && b.kind === 'kingdom'
+      ? {
+          text: `${b.name} shrugs off ${a.name}: when it is trashed it ${m(b, 'returnsToHand') ? 'comes back to your hand' : 'still pays out'}`,
+          weight: 2,
+        }
+      : undefined,
+  (a, b) =>
+    a.tags.includes('attackHandsize') && m(b, 'drawToX')
+      ? { text: `${b.name} refills the hand that ${a.name} cuts down`, weight: 2 }
+      : undefined,
   // Treasure decks.
   (a, b) => {
     if (!m(b, 'treasurePayoff')) return undefined;
@@ -270,11 +282,11 @@ export function findChains(cards: readonly Card[], ctx: InteractionContext = {})
       kind: 'chain' as const,
       cards: members.map((c) => c.id),
       reason:
-        members.length === 2
+        ordered.length === 1
           ? capitalize(ordered[0]!.text)
           : headline.map((c) => c.name).join(' + ') +
             (members.length > headline.length ? ` and ${members.length - headline.length} more` : ''),
-      steps: members.length === 2 ? undefined : ordered.map((l) => capitalize(l.text)),
+      steps: ordered.length === 1 ? undefined : ordered.map((l) => capitalize(l.text)),
       loop: loop || undefined,
       weight: Math.round(weight * 10) / 10,
     };

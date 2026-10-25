@@ -10,6 +10,7 @@ describe('generateRequestSchema', () => {
       allowComplex: true,
       maxProducts: 0,
       surprise: false,
+      emphasis: [],
       locked: [],
       banned: [],
     });
@@ -26,6 +27,7 @@ describe('generateRequestSchema', () => {
     [{ landscapes: 1.5 }, 'non-integer'],
     [{ attacks: 'lots' }, 'bad enum'],
     [{ banned: Array(301).fill('village') }, 'oversized list'],
+    [{ emphasis: ['explosions'] }, 'unknown emphasis'],
   ])('rejects %j (%s)', (input, _reason) => {
     expect(generateRequestSchema.safeParse(input).success).toBe(false);
   });

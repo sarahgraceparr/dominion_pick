@@ -168,6 +168,7 @@ export function deriveMechanics(name: string, rawText: string, types: string[]):
   if (/trash the victory card and gain a victory card|trash a victory card[^.]*gain a victory/.test(text)) out.add('victoryRemodel');
   if (/gain a duration card|duration cards? (you have )?in play/.test(text)) out.add('durationPayoff');
   if (/when you gain an action\b/.test(text)) out.add('onGainAction');
+  if (/draw until you have/.test(text)) out.add('drawToX');
 
   return [...out].sort();
 }

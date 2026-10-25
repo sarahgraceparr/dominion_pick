@@ -1,4 +1,4 @@
-import { generateRequestSchema, type AttackPreference, type GenerateRequestInput } from '../core';
+import { generateRequestSchema, type AttackPreference, type Emphasis, type GenerateRequestInput } from '../core';
 
 /** User-tunable options, persisted per device and mirrored in the share URL. */
 export interface Settings {
@@ -7,6 +7,8 @@ export interface Settings {
   attacks: AttackPreference;
   allowComplex: boolean;
   maxProducts: number;
+  /** play styles to emphasise */
+  emphasis: Emphasis[];
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -15,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
   attacks: 'any',
   allowComplex: true,
   maxProducts: 0,
+  emphasis: [],
 };
 
 const STORAGE_KEY = 'dominion-pick:settings:v1';
@@ -51,8 +54,8 @@ export function sanitize(input: Partial<Settings>): Settings {
   const merged = { ...DEFAULT_SETTINGS, ...pick(input) };
   const parsed = generateRequestSchema.safeParse(merged);
   if (!parsed.success) return DEFAULT_SETTINGS;
-  const { products, landscapes, attacks, allowComplex, maxProducts } = parsed.data;
-  return { products, landscapes, attacks, allowComplex, maxProducts };
+  const { products, landscapes, attacks, allowComplex, maxProducts, emphasis } = parsed.data;
+  return { products, landscapes, attacks, allowComplex, maxProducts, emphasis };
 }
 
 function pick(input: Partial<Settings>): Partial<Settings> {
@@ -62,6 +65,7 @@ function pick(input: Partial<Settings>): Partial<Settings> {
   if (typeof input.attacks === 'string') out.attacks = input.attacks;
   if (typeof input.allowComplex === 'boolean') out.allowComplex = input.allowComplex;
   if (typeof input.maxProducts === 'number') out.maxProducts = input.maxProducts;
+  if (Array.isArray(input.emphasis)) out.emphasis = input.emphasis.filter((e): e is Emphasis => typeof e === 'string') as Emphasis[];
   return out;
 }
 
@@ -85,6 +89,7 @@ export function toQuery(state: ShareState): string {
   q.set('a', state.settings.attacks);
   q.set('c', state.settings.allowComplex ? '1' : '0');
   q.set('m', String(state.settings.maxProducts));
+  if (state.settings.emphasis.length) q.set('e', state.settings.emphasis.join(','));
   if (state.locked.length) q.set('lock', state.locked.join(','));
   if (state.banned.length) q.set('ban', state.banned.join(','));
   if (state.surprise) q.set('s', '1');
@@ -103,14 +108,21 @@ export function fromQuery(search: string): ShareState | undefined {
     attacks: (q.get('a') ?? DEFAULT_SETTINGS.attacks) as AttackPreference,
     allowComplex: q.get('c') !== '0',
     maxProducts: Number(q.get('m') ?? 0),
+    emphasis: list(q.get('e')) as Emphasis[],
     locked: list(q.get('lock')),
     banned: list(q.get('ban')),
     surprise: q.get('s') === '1',
   };
   const parsed = generateRequestSchema.safeParse(request);
   if (!parsed.success) return undefined;
-  const { products, landscapes, attacks, allowComplex, maxProducts, locked, banned, surprise } = parsed.data;
-  return { seed, settings: { products, landscapes, attacks, allowComplex, maxProducts }, locked, banned, ...(surprise && { surprise }) };
+  const { products, landscapes, attacks, allowComplex, maxProducts, emphasis, locked, banned, surprise } = parsed.data;
+  return {
+    seed,
+    settings: { products, landscapes, attacks, allowComplex, maxProducts, emphasis },
+    locked,
+    banned,
+    ...(surprise && { surprise }),
+  };
 }
 
 export function hasStoredSettings(storage: Pick<Storage, 'getItem'> | undefined = safeStorage()): boolean {
