@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { deriveTags, normalize } from './derive-tags';
+import { deriveMechanics, deriveTags, normalize } from './derive-tags';
 
 // Paraphrased, made-up card texts in the upstream markup format.
 describe('deriveTags', () => {
@@ -63,5 +63,52 @@ describe('deriveTags', () => {
 describe('normalize', () => {
   it('flattens markup', () => {
     expect(normalize('+1 Card<br>+2 Actions<line>Worth 2 <VP>')).toBe('+1 card +2 actions || worth 2 <vp>');
+  });
+});
+
+describe('deriveMechanics', () => {
+  it('distinguishes what can be trashed', () => {
+    expect(deriveMechanics('X', 'Trash a card from your hand.', ['Action'])).toContain('trashAny');
+    expect(deriveMechanics('X', 'You may trash an Action card from your hand to gain a Loot.', ['Event'])).toEqual([
+      'gainLoot',
+      'trashAction',
+    ]);
+    expect(deriveMechanics('X', 'You may trash a Copper from your hand for +3 Coins.', ['Action'])).toEqual(['trashTreasure']);
+  });
+
+  it('reads below-the-line triggers', () => {
+    expect(deriveMechanics('X', '+2 Actions<line>When you trash this, put it into your hand.', ['Action'])).toEqual([
+      'onTrashSelf',
+      'returnsToHand',
+    ]);
+    expect(deriveMechanics('X', '+1 Buy<line>When one of your cards is trashed, you may discard this to gain a Gold.', ['Action'])).toEqual(
+      ['gainGold', 'onTrashAny'],
+    );
+    expect(deriveMechanics('X', '<line>When you discard this other than during Clean-up, gain a Gold.', ['Victory'])).toContain(
+      'onDiscard',
+    );
+    expect(deriveMechanics('X', '+1 Coin<line>When you discard this from play, topdeck a Treasure.', ['Action'])).not.toContain(
+      'onDiscard',
+    );
+  });
+
+  it('spots self-replication by card name', () => {
+    expect(deriveMechanics('Mice', '+1 Card +1 Action. Gain a Mice.', ['Action'])).toContain('selfReplicate');
+    expect(deriveMechanics('Mice', '+1 Card +1 Action. Gain a Silver.', ['Action'])).not.toContain('selfReplicate');
+  });
+
+  it('detects refunds, type counting, the trash as a resource and $5+ Treasure triggers', () => {
+    expect(deriveMechanics('X', 'Trash a card from your hand. +1 Coin per 1 Coin it costs.', ['Treasure'])).toContain('refund');
+    expect(deriveMechanics('X', 'Trash a card from your hand. +2 Cards per type it has.', ['Action'])).toContain('typeCount');
+    expect(deriveMechanics('X', 'Gain a card from the trash.', ['Action'])).toContain('fromTrash');
+    expect(deriveMechanics('X', 'The next time anyone gains a Treasure costing 5 Coin or more, gain a Loot.', ['Action'])).toEqual([
+      'gainLoot',
+      'onGainTreasure5',
+    ]);
+  });
+
+  it('marks Looters and Ruins-gainers as self-junking', () => {
+    expect(deriveMechanics('X', '+5 Coin<line>When you gain this, gain 2 Ruins.', ['Action'])).toContain('selfJunk');
+    expect(deriveMechanics('X', '+1 Card', ['Action', 'Looter'])).toContain('selfJunk');
   });
 });

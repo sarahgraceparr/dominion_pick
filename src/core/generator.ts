@@ -1,8 +1,8 @@
-import { cardsInProducts, getCard, productFamily } from './cards';
+import { cardsInProducts, database, getCard, productFamily } from './cards';
 import { createRng, randomSeed, type Rng } from './rng';
 import { generateRequestSchema, type GenerateRequestInput } from './schema';
 import { scoreKingdom } from './scoring';
-import { buildSetup } from './setup';
+import { buildSetup, type SetupResult } from './setup';
 import { findSynergies } from './synergy';
 import type { Card, Kingdom, ScoreBreakdown, Synergy } from './types';
 
@@ -20,9 +20,12 @@ export class GenerationError extends Error {
 interface Candidate {
   cards: Card[];
   landscapes: Card[];
+  setup: SetupResult;
   synergies: Synergy[];
   score: ScoreBreakdown;
 }
+
+const SHELTERS = database.cards.filter((c) => c.kind === 'shelter');
 
 /**
  * Generates a fun kingdom. Pure and deterministic: the same request (with
@@ -44,10 +47,14 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
   const lockedIds = new Set(lockedCards.map((c) => c.id));
 
   const owned = cardsInProducts(req.products);
-  const allowed = (c: Card) => !banned.has(c.id) && !lockedIds.has(c.id) && (req.allowComplex || !c.tags.includes('complex'));
+  // "Surprise me" always allows complex cards and wants at least two landscapes.
+  const allowComplex = req.allowComplex || req.surprise;
+  const allowed = (c: Card) => !banned.has(c.id) && !lockedIds.has(c.id) && (allowComplex || !c.tags.includes('complex'));
   const kingdomPool = owned.filter((c) => c.kind === 'kingdom' && allowed(c) && (req.attacks !== 'none' || !c.tags.includes('attack')));
   const landscapePool = owned.filter((c) => c.kind === 'landscape' && allowed(c));
-  const landscapeCount = Math.max(req.landscapes, lockedLandscapes.length);
+  const landscapeCount = Math.max(req.surprise ? Math.max(req.landscapes, 2) : req.landscapes, lockedLandscapes.length);
+  const allies = owned.filter((c) => c.kind === 'ally' && !banned.has(c.id));
+  const prophecies = owned.filter((c) => c.kind === 'prophecy' && !banned.has(c.id));
 
   const candidates: Candidate[] = [];
   for (let i = 0; i < CANDIDATES; i++) {
@@ -61,25 +68,25 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
         .shuffle(landscapePool.filter((l) => req.maxProducts === 0 || l.products.some((p) => families.has(productFamily(p)))))
         .slice(0, landscapeCount - lockedLandscapes.length),
     ];
-    const synergies = findSynergies([...cards, ...landscapes]);
-    candidates.push({ cards, landscapes, synergies, score: scoreKingdom(cards, landscapes, synergies) });
+    // Setup is decided per candidate because it changes how cards interact:
+    // Shelters put Necropolis in every deck, Traits sit on specific piles.
+    const used = new Set([...cards, ...landscapes]);
+    const setup = buildSetup(
+      { kingdom: cards, landscapes, unusedKingdom: kingdomPool.filter((c) => !used.has(c)), allies, prophecies },
+      rng,
+    );
+    const synergies = findSynergies([...cards, ...landscapes, ...setup.extras, ...(setup.shelters ? SHELTERS : [])], {
+      traits: setup.traits,
+    });
+    const score = scoreKingdom(cards, landscapes, synergies, { surprise: req.surprise });
+    candidates.push({ cards, landscapes, setup, synergies, score });
   }
   if (candidates.length === 0) {
     throw new GenerationError('Not enough cards match your settings to build a kingdom — select more sets or relax the filters.');
   }
 
   const chosen = pickFromShortlist(candidates, rng);
-  const used = new Set([...chosen.cards, ...chosen.landscapes].map((c) => c.id));
-  const setup = buildSetup(
-    {
-      kingdom: chosen.cards,
-      landscapes: chosen.landscapes,
-      unusedKingdom: kingdomPool.filter((c) => !used.has(c.id)),
-      allies: owned.filter((c) => c.kind === 'ally' && !banned.has(c.id)),
-      prophecies: owned.filter((c) => c.kind === 'prophecy' && !banned.has(c.id)),
-    },
-    rng,
-  );
+  const { setup } = chosen;
 
   return {
     seed,

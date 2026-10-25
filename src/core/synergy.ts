@@ -1,4 +1,5 @@
 import { COMBOS } from './combos';
+import { findChains, type InteractionContext } from './interactions';
 import type { Card, Synergy, Tag } from './types';
 
 const has = (c: Card, t: Tag) => c.tags.includes(t);
@@ -34,12 +35,6 @@ const PAIR_RULES: PairRule[] = [
     reason: (a, b) => `${a.name} doubles up a strong terminal like ${b.name}`,
   },
   {
-    a: (c) => has(c, 'trasher') || has(c, 'remodeler'),
-    b: (c) => has(c, 'trashBenefit'),
-    weight: 3,
-    reason: (a, b) => `${a.name} trashes cards, which ${b.name} rewards`,
-  },
-  {
     a: (c) => has(c, 'trasher') && !has(c, 'remodeler'),
     b: (c) => has(c, 'draw') && !has(c, 'trasher'),
     weight: 1,
@@ -54,7 +49,7 @@ const PAIR_RULES: PairRule[] = [
   {
     a: (c) => has(c, 'gainer') && !has(c, 'attack'),
     b: isPureVictory,
-    weight: 2,
+    weight: 1,
     reason: (a, b) => `${a.name} gains cards that feed an alternative VP plan with ${b.name}`,
   },
   {
@@ -75,17 +70,24 @@ const MAX_HITS_PER_RULE = 2;
 /** Caps how many generic synergies one card takes part in, so multi-role cards don't dominate. */
 const MAX_RULE_HITS_PER_CARD = 2;
 
-/** Finds the synergies present among a set of kingdom cards and landscapes. */
-export function findSynergies(cards: readonly Card[]): Synergy[] {
-  const out: Synergy[] = [];
+/**
+ * Finds the synergies present among a set of kingdom cards and landscapes
+ * (plus Shelters when the setup uses them): mechanic chains first, then
+ * curated combos and generic role pairings that the chains don't already cover.
+ */
+export function findSynergies(cards: readonly Card[], ctx: InteractionContext = {}): Synergy[] {
+  const out: Synergy[] = findChains(cards, ctx);
   const names = new Set(cards.map((c) => c.name));
   const byName = new Map(cards.map((c) => [c.name, c]));
+  const sameChain = (a: string, b: string) => out.some((s) => s.cards.includes(a) && s.cards.includes(b));
 
   for (const combo of COMBOS) {
     if (!names.has(combo.card)) continue;
-    const partners = combo.partners.filter((p) => names.has(p));
+    const comboId = byName.get(combo.card)!.id;
+    const partners = combo.partners.filter((p) => names.has(p) && !sameChain(comboId, byName.get(p)!.id));
     if (partners.length === 0) continue;
     out.push({
+      kind: 'combo',
       cards: [combo.card, ...partners].map((n) => byName.get(n)!.id),
       reason: `${combo.card} + ${partners.join(' / ')}: ${combo.reason}`,
       weight: combo.weight,
@@ -93,7 +95,7 @@ export function findSynergies(cards: readonly Card[]): Synergy[] {
   }
 
   const perCard = new Map<string, number>();
-  const comboPairs = new Set(out.flatMap((s) => s.cards.slice(1).map((p) => `${s.cards[0]}|${p}`)));
+  const comboPairs = new Set(out.filter((s) => s.kind === 'combo').flatMap((s) => s.cards.slice(1).map((p) => `${s.cards[0]}|${p}`)));
   // Strongest rules first, so the per-card cap keeps the most meaningful pairs.
   for (const rule of [...PAIR_RULES].sort((a, b) => b.weight - a.weight)) {
     // Only report each rule's strongest few pairs; a board with 3 villages and
@@ -104,9 +106,9 @@ export function findSynergies(cards: readonly Card[]): Synergy[] {
       for (const b of cards) {
         if (hits >= MAX_HITS_PER_RULE) break;
         if (a === b || !rule.b(b)) continue;
-        if (comboPairs.has(`${a.id}|${b.id}`) || comboPairs.has(`${b.id}|${a.id}`)) continue;
+        if (comboPairs.has(`${a.id}|${b.id}`) || comboPairs.has(`${b.id}|${a.id}`) || sameChain(a.id, b.id)) continue;
         if ((perCard.get(a.id) ?? 0) >= MAX_RULE_HITS_PER_CARD || (perCard.get(b.id) ?? 0) >= MAX_RULE_HITS_PER_CARD) continue;
-        out.push({ cards: [a.id, b.id], reason: rule.reason(a, b), weight: rule.weight });
+        out.push({ kind: 'role', cards: [a.id, b.id], reason: rule.reason(a, b), weight: rule.weight });
         hits++;
         perCard.set(a.id, (perCard.get(a.id) ?? 0) + 1);
         perCard.set(b.id, (perCard.get(b.id) ?? 0) + 1);

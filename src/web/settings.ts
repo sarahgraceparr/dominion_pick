@@ -70,6 +70,8 @@ export interface ShareState {
   seed?: string;
   locked: string[];
   banned: string[];
+  /** generated with "Surprise me" */
+  surprise?: boolean;
 }
 
 const list = (v: string | null) => (v ? v.split(',').filter(Boolean) : []);
@@ -85,6 +87,7 @@ export function toQuery(state: ShareState): string {
   q.set('m', String(state.settings.maxProducts));
   if (state.locked.length) q.set('lock', state.locked.join(','));
   if (state.banned.length) q.set('ban', state.banned.join(','));
+  if (state.surprise) q.set('s', '1');
   return q.toString();
 }
 
@@ -102,11 +105,12 @@ export function fromQuery(search: string): ShareState | undefined {
     maxProducts: Number(q.get('m') ?? 0),
     locked: list(q.get('lock')),
     banned: list(q.get('ban')),
+    surprise: q.get('s') === '1',
   };
   const parsed = generateRequestSchema.safeParse(request);
   if (!parsed.success) return undefined;
-  const { products, landscapes, attacks, allowComplex, maxProducts, locked, banned } = parsed.data;
-  return { seed, settings: { products, landscapes, attacks, allowComplex, maxProducts }, locked, banned };
+  const { products, landscapes, attacks, allowComplex, maxProducts, locked, banned, surprise } = parsed.data;
+  return { seed, settings: { products, landscapes, attacks, allowComplex, maxProducts }, locked, banned, ...(surprise && { surprise }) };
 }
 
 export function hasStoredSettings(storage: Pick<Storage, 'getItem'> | undefined = safeStorage()): boolean {

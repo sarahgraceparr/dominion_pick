@@ -15,6 +15,10 @@ export interface SetupInput {
 export interface SetupResult {
   extras: Card[];
   notes: SetupNote[];
+  /** players start with Shelters instead of Estates */
+  shelters: boolean;
+  /** each Trait and the kingdom pile it was placed on */
+  traits: { trait: Card; target: Card }[];
 }
 
 const names = (cards: Card[]) => new Set(cards.map((c) => c.name));
@@ -82,8 +86,20 @@ export function buildSetup(input: SetupInput, rng: Rng): SetupResult {
     notes.push({ title: 'Colony & Platinum', detail: 'Add Colony and Platinum piles to the Supply' });
   }
   const darkAges = fromProduct(kingdom, ['darkages']);
-  if (darkAges > 0 && rng.next() < darkAges / kingdom.length) {
+  const shelters = darkAges > 0 && rng.next() < darkAges / kingdom.length;
+  if (shelters) {
     notes.push({ title: 'Shelters', detail: 'Each player starts with Necropolis, Hovel and Overgrown Estate instead of 3 Estates' });
+  }
+
+  // Each Trait goes on a random Action or Treasure Kingdom pile (one Trait per pile).
+  const traits: SetupResult['traits'] = [];
+  let traitPiles = kingdom.filter((c) => c.types.includes('Action') || c.types.includes('Treasure'));
+  for (const trait of landscapes.filter((l) => l.types.includes('Trait'))) {
+    if (traitPiles.length === 0) break;
+    const target = rng.pick(traitPiles);
+    traitPiles = traitPiles.filter((c) => c !== target);
+    traits.push({ trait, target });
+    notes.push({ title: trait.name, detail: `Put the ${trait.name} Trait on the ${target.name} pile`, targetId: target.id });
   }
 
   if (kingdom.some((c) => c.cost.potion)) notes.push({ title: 'Potion', detail: 'Add the Potion pile to the Supply' });
@@ -108,5 +124,5 @@ export function buildSetup(input: SetupInput, rng: Rng): SetupResult {
     notes.push({ title: 'Prophecy', detail: `Omen cards use a Prophecy: ${prophecy.name}. Put Sun tokens on it.`, cardId: prophecy.id });
   }
 
-  return { extras, notes };
+  return { extras, notes, shelters, traits };
 }

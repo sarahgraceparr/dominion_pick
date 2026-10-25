@@ -20,7 +20,8 @@ describe('card database', () => {
   });
 
   it('does not ship card rules text', () => {
-    for (const c of database.cards) expect(Object.keys(c).sort()).toEqual(['cost', 'id', 'kind', 'name', 'products', 'tags', 'types']);
+    for (const c of database.cards)
+      expect(Object.keys(c).sort()).toEqual(['cost', 'id', 'kind', 'mechanics', 'name', 'products', 'tags', 'types']);
   });
 
   it('every product has enough kingdom cards for a game on its own or with base', () => {

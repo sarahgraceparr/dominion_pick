@@ -147,3 +147,18 @@ describe('generateKingdom', () => {
     expect(generated / 30).toBeGreaterThan(random / 30 + 5);
   });
 });
+
+describe('surprise mode', () => {
+  it('uses at least two landscapes and allows complex cards', () => {
+    const k = generateKingdom({ seed: 'surprise', products: [], landscapes: 0, allowComplex: false, surprise: true });
+    expect(k.landscapes.length).toBeGreaterThanOrEqual(2);
+    expect(k.score.parts.map((p) => p.label)).toContain('Unusual mechanics');
+  });
+
+  it('places Traits on piles in the setup', () => {
+    const inherited = getCardByName('Inherited')!.id;
+    const k = generateKingdom({ seed: 'trait', products: ['plunder'], locked: [inherited], landscapes: 1 });
+    const note = k.setup.find((n) => n.title === 'Inherited')!;
+    expect(k.cards.map((c) => c.id)).toContain(note.targetId);
+  });
+});

@@ -17,26 +17,45 @@ Open the site in Chrome, then use **⋮ → Add to Home screen / Install app**. 
 
 ## How "fun" is decided
 
-Each card is classified by its **roles** (the tags in `src/core/types.ts`):
+Three things make a kingdom fun:
 
-| Role                                                 | Meaning                                                       |
-| ---------------------------------------------------- | ------------------------------------------------------------- |
-| Village / Cantrip / Draw / Terminal                  | how a card affects your Action and card economy               |
-| Trasher / Remodeler / Gainer / +Buy / Money / Sifter | deck-building tools                                           |
-| Throne                                               | plays other cards several times                               |
-| Attack (Curser, Hand-size, Junker, Deck)             | interaction, with **Defense** as counterplay                  |
-| Alt VP / Cost reducer / Trash payoff / Duration      | alternative plans and special interactions                    |
-| Complex                                              | Potion or Debt costs, Night, Boons/Hexes, Reserve, Traveller… |
+1. **Chains of cards that feed each other**, especially ones that repeat within a turn.
+2. **Several viable strategies on the same board**. Two balanced options are good; more are better.
+3. **Unexpected consequences**, often from landscapes (Events, Traits, Projects, Ways…) or the setup itself.
 
-Tags come from the card text through a heuristic classifier (`scripts/lib/derive-tags.ts`), which runs at build time. Known mistakes are fixed by hand in `scripts/tag-overrides.ts`.
+### Card mechanics and chains
 
-The generator draws 300 random kingdoms that fit your settings, scores each one, and then picks among the best 15. Better kingdoms are more likely, but rerolls stay varied. The score (`src/core/scoring.ts`) follows common community strategy advice:
+At build time, each card's full text is parsed into two kinds of information (`scripts/lib/derive-tags.ts`, with hand corrections in `scripts/tag-overrides.ts`):
 
-- **Synergies** (`src/core/synergy.ts`). Generic role pairs: villages plus terminal draw, Throne Room plus a strong terminal, trashers plus trash payoffs, +Buy plus cost reduction, gainers plus alt-VP, and counterplay to attacks. On top of these is a curated list of well-known combos (`src/core/combos.ts`), such as Workshop/Gardens, King's Court/Bridge, Fortress plus trashers, and Tunnel plus discarders. Returns diminish, and each card's participation is capped so that multi-role cards don't dominate.
-- **Strategic depth.** An engine is possible (villages and draw), ideally with trashing and +Buy, alongside alternative VP plans.
-- **Variety.** Many different roles, and a spread of costs including cheap openers and $5+ cards.
-- **Interaction.** Some attacks, preferably with counterplay.
-- **Penalties** for known un-fun patterns: stacked cursers, curses with no way to clean them up, villages with nothing to draw, terminal draw with no villages, and boards where nothing combos ("Big Money").
+- **Roles**: village, draw, trashing, gaining, +Buy, attacks and so on.
+- **Mechanics** (`MECHANICS` in `src/core/types.ts`): what a card _produces_ (trashes an Action, gains a Loot, makes copies of itself, pays out by cost…) and what it _reacts to_ (when trashed, when any card is trashed, when a $5+ Treasure is gained, when discarded…).
+
+`src/core/interactions.ts` links producers to reactors and groups the links into **chains**, explained step by step in the app. A chain that can repeat within a turn is a **loop**. Longer chains, loops and chains that run through a landscape score highest. The setup is part of the picture: Shelters put Necropolis in every deck, and Traits are placed on a specific pile (Inherited on Rats means everyone starts with a Rats).
+
+The examples that shaped the model are tests in `src/core/fun.test.ts`:
+
+- **Peril + Fortress + Market Square + Squire + Cutthroat.** Squire's +Buys let you use Peril repeatedly. Fortress comes back every time it's trashed, Market Square turns each trash into a Gold, and Cutthroat turns the Loots and Golds into more Loots.
+- **Maroon + Death Cart.** Ruins are Action–Ruins, so each one Maroon trashes draws 4 cards.
+- **Rats + Crucible + Inherited (Rats).** Rats keep copying themselves, and Crucible cashes them in for $4 without using an Action.
+- **Peril + Shelters.** Necropolis becomes a $7 Loot on the first shuffle.
+- **Rogue / Shaman with trashers.** The trash becomes a shared resource, which is interaction in itself.
+
+On top of the chains there are generic role pairings (villages with terminal draw, Throne Room with strong terminals, +Buy with cost reducers…) and a curated list of well-known combos (`src/core/combos.ts`).
+
+### Scoring
+
+The generator draws 300 random kingdoms that fit your settings, decides each one's setup, scores it, and picks among the best 15. Better kingdoms are more likely, but rerolls stay varied. The score (`src/core/scoring.ts`) adds up:
+
+- **Synergies.** Chains, combos and role pairings, with diminishing returns. There's a bonus for chains through landscapes.
+- **Viable strategies.** Big Money, Engine, Combo, Alt-VP, Trash & payload, and Slog are each checked separately. One strategy earns nothing, two earn +10, and more earn up to +25.
+- **Variety, cost spread and interaction.**
+- **Penalties** for known un-fun patterns: stacked cursers, curses with no way to clean them up, villages with nothing to draw, terminal draw with no villages, and boards with nothing to do but buy money.
+
+To stop multi-purpose cards (Squire, Fortress, Wizards…) from appearing in every kingdom, each card's number of links is capped.
+
+### Surprise me
+
+**✨ Surprise me** uses at least two landscapes, allows complex mechanics, doubles the bonus for chains that run through landscapes, and rewards unusual card types (Night, Reserve, Traits, Ways, Projects, Omens…).
 
 ## Architecture
 

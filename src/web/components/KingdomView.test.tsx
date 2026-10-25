@@ -36,4 +36,29 @@ describe('KingdomView', () => {
     expect(link).toHaveAttribute('href', expect.stringMatching(/^https:\/\/wiki\.dominionstrategy\.com\//));
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
+
+  it('explains chains step by step, flags loops and marks Trait piles', () => {
+    const base = generateKingdom({ seed: 'chain', products: ['darkages', 'plunder'], landscapes: 0 });
+    const target = base.cards[0]!;
+    const kingdom = {
+      ...base,
+      setup: [...base.setup, { title: 'Inherited', detail: `Put Inherited on ${target.name}`, targetId: target.id }],
+      synergies: [
+        {
+          kind: 'chain' as const,
+          cards: [base.cards[0]!.id, base.cards[1]!.id, base.cards[2]!.id],
+          reason: 'A + B + C',
+          steps: ['A sets off B', 'B sets off C'],
+          loop: true,
+          weight: 10,
+        },
+      ],
+    };
+    render(<KingdomView kingdom={kingdom} owned={[]} locked={new Set()} onToggleLock={noop} onSwap={noop} />);
+    expect(screen.getByText('A + B + C')).toBeInTheDocument();
+    expect(screen.getByText('repeats')).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem').map((li) => li.textContent)).toEqual(expect.arrayContaining(['A sets off B', 'B sets off C']));
+    const kingdomList = screen.getByRole('list', { name: 'Kingdom cards' });
+    expect(within(kingdomList).getByText('Inherited')).toBeInTheDocument();
+  });
 });

@@ -34,10 +34,43 @@ export const TAGS = [
 
 export type Tag = (typeof TAGS)[number];
 
+/**
+ * Finer-grained mechanics: what a card *produces* and what it *reacts to*.
+ * Linking producers to reactors is how chains and loops are found
+ * (see interactions.ts).
+ */
+export const MECHANICS = [
+  // producers
+  'trashAny', // trashes a card of your choice from your hand
+  'trashAction', // trashes an Action card from your hand
+  'trashTreasure', // trashes a Treasure (or Copper) from your hand
+  'trashSelf', // can trash itself
+  'gainLoot', // gains Loot (Treasures costing $7)
+  'gainGold', // gains a Gold
+  'selfJunk', // hands its owner Ruins (Action–Ruins: two types each)
+  'selfReplicate', // gains copies of itself
+  'discards', // you discard cards from hand for a benefit
+  'refund', // pays out based on the cost of the trashed card
+  'fromTrash', // gains or plays cards from the trash
+  'manyBuys', // +2 Buys or more
+  'gainAttack', // gains an Attack card (Squire, when trashed)
+  // reactors
+  'onTrashSelf', // does something when it is trashed
+  'returnsToHand', // comes back to your hand when trashed
+  'onTrashAny', // reacts whenever one of your cards is trashed
+  'onGainTreasure5', // reacts when a Treasure costing $5+ is gained
+  'onDiscard', // reacts when discarded outside Clean-up
+  'typeCount', // scales with the number of types a card has
+  'startsInDeck', // a pile you start the game with (Inherited)
+] as const;
+
+export type Mechanic = (typeof MECHANICS)[number];
+
 export const LANDSCAPE_TYPES = ['Event', 'Landmark', 'Project', 'Way', 'Trait'] as const;
 export type LandscapeType = (typeof LANDSCAPE_TYPES)[number];
 
-export type CardKind = 'kingdom' | 'landscape' | 'ally' | 'prophecy';
+/** 'shelter' cards are never in the Supply; they matter when the setup uses Shelters. */
+export type CardKind = 'kingdom' | 'landscape' | 'ally' | 'prophecy' | 'shelter';
 
 export interface Cost {
   coins: number;
@@ -57,6 +90,7 @@ export interface Card {
   cost: Cost;
   types: string[];
   tags: Tag[];
+  mechanics: Mechanic[];
 }
 
 export interface Product {
@@ -77,26 +111,16 @@ export interface CardDatabase {
 
 export type AttackPreference = 'none' | 'some' | 'any';
 
-export interface GenerateOptions {
-  /** product ids the player owns; empty means "everything" */
-  products: string[];
-  /** number of landscapes (Events, Projects, Ways, Landmarks, Traits) */
-  landscapes: number;
-  attacks: AttackPreference;
-  /** allow Potion-cost and Debt-cost cards and other complex mechanics */
-  allowComplex: boolean;
-  /** maximum number of distinct products the kingdom may draw from (0 = no limit) */
-  maxProducts: number;
-  /** card ids that must be in the kingdom */
-  locked: string[];
-  /** card ids that must not be in the kingdom */
-  banned: string[];
-}
-
 export interface Synergy {
+  /** 'chain': linked by mechanics (see interactions.ts); 'combo': curated; 'role': generic role pairing */
+  kind: 'chain' | 'combo' | 'role';
   cards: string[];
   /** short human readable reason */
   reason: string;
+  /** for chains: how each link works, in play order */
+  steps?: string[];
+  /** the chain can repeat within a turn */
+  loop?: boolean;
   weight: number;
 }
 
@@ -112,6 +136,8 @@ export interface SetupNote {
   detail: string;
   /** card id of an extra card added to the setup (e.g. the Bane) */
   cardId?: string;
+  /** kingdom pile this note applies to (e.g. the pile a Trait sits on) */
+  targetId?: string;
 }
 
 export interface Kingdom {

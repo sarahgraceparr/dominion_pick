@@ -1,4 +1,4 @@
-import type { Tag } from '../src/core/types';
+import type { Mechanic, Tag } from '../src/core/types';
 
 /**
  * Hand-curated corrections to the heuristic tags from derive-tags.ts.
@@ -44,4 +44,36 @@ export const TAG_OVERRIDES: Record<string, { add?: Tag[]; remove?: Tag[] }> = {
   'Road Network': { add: ['draw'] },
   Toil: { add: ['village'] },
   Training: { add: ['economy'] },
+};
+
+/** Hand-curated corrections to the mechanics from deriveMechanics(). */
+export const MECHANIC_OVERRIDES: Record<string, { add?: Mechanic[]; remove?: Mechanic[] }> = {
+  // Printed card: "When you trash this, gain an Attack card" (upstream text says "Action").
+  Squire: { add: ['gainAttack'] },
+  Apprentice: { add: ['refund'] },
+  Bishop: { add: ['refund'] },
+  'Death Cart': { add: ['trashAction'] },
+  Procession: { add: ['trashAction'] },
+  Rogue: { add: ['fromTrash'] },
+  Lookout: { add: ['trashAny'] },
+  Port: { add: ['selfReplicate'] },
+  Experiment: { add: ['selfReplicate'] },
+  // These give Ruins to the other players, not to themselves.
+  Cultist: { remove: ['selfJunk'] },
+  Marauder: { remove: ['selfJunk'] },
+  // Traits and cards that gain *other* cards by name, not copies of themselves.
+  Cursed: { remove: ['selfReplicate'] },
+  Duchess: { remove: ['selfReplicate'] },
+  Fawning: { remove: ['selfReplicate'] },
+  Ferryman: { remove: ['selfReplicate'] },
+  Friendly: { remove: ['selfReplicate'] },
+  Hasty: { remove: ['selfReplicate'] },
+  Nearby: { remove: ['selfReplicate'] },
+  Pious: { remove: ['selfReplicate'] },
+  Rich: { remove: ['selfReplicate'] },
+  Transmute: { remove: ['selfReplicate'] },
+  // "You may trash this from your hand" is not a when-trashed trigger.
+  Hovel: { remove: ['onTrashSelf'] },
+  // You start the game with a card from the pile Inherited is on.
+  Inherited: { add: ['startsInDeck'] },
 };

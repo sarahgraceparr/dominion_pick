@@ -51,6 +51,7 @@ describe('share URLs', () => {
       settings: { products: ['base2', 'intrigue2'], landscapes: 2, attacks: 'some' as const, allowComplex: false, maxProducts: 2 },
       locked: ['village'],
       banned: ['witch'],
+      surprise: true,
     };
     expect(fromQuery(`?${toQuery(state)}`)).toEqual(state);
   });

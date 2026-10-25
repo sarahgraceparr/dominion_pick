@@ -71,3 +71,28 @@ describe('buildSetup', () => {
     expect(extras).toEqual([]);
   });
 });
+
+describe('buildSetup traits and shelters', () => {
+  it('places each Trait on a different Action or Treasure pile', () => {
+    const traits = cardsInProducts(['plunder'])
+      .filter((c) => c.types.includes('Trait'))
+      .slice(0, 2);
+    const k = kingdom(10);
+    const { traits: placed, notes } = buildSetup(input({ kingdom: k, landscapes: traits }), createRng('t'));
+    expect(placed).toHaveLength(2);
+    expect(new Set(placed.map((p) => p.target)).size).toBe(2);
+    for (const { target } of placed) {
+      expect(k).toContain(target);
+      expect(target.types.includes('Action') || target.types.includes('Treasure')).toBe(true);
+    }
+    expect(notes.filter((n) => n.targetId)).toHaveLength(2);
+  });
+
+  it('reports Shelters for an all-Dark Ages kingdom', () => {
+    const k = cardsInProducts(['darkages'])
+      .filter((c) => c.kind === 'kingdom')
+      .slice(0, 10);
+    expect(buildSetup(input({ kingdom: k }), createRng('s')).shelters).toBe(true);
+    expect(buildSetup(input({ kingdom: kingdom(10) }), createRng('s')).shelters).toBe(false);
+  });
+});

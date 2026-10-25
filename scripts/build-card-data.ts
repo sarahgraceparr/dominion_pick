@@ -9,9 +9,9 @@
  */
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { deriveTags } from './lib/derive-tags';
-import { TAG_OVERRIDES } from './tag-overrides';
-import type { Card, CardDatabase, CardKind, Cost, Product, Tag } from '../src/core/types';
+import { deriveMechanics, deriveTags } from './lib/derive-tags';
+import { MECHANIC_OVERRIDES, TAG_OVERRIDES } from './tag-overrides';
+import type { Card, CardDatabase, CardKind, Cost, Mechanic, Product, Tag } from '../src/core/types';
 import { LANDSCAPE_TYPES } from '../src/core/types';
 import { slug } from '../src/core/slug';
 
@@ -85,6 +85,7 @@ function parseCost(raw: RawCard): Cost {
 function kindOf(raw: RawCard): CardKind | undefined {
   if (raw.types.includes('Ally')) return 'ally';
   if (raw.types.includes('Prophecy')) return 'prophecy';
+  if (raw.types.includes('Shelter')) return 'shelter';
   if (raw.types.some((t) => (LANDSCAPE_TYPES as readonly string[]).includes(t))) return 'landscape';
   if (raw.randomizer === false) return undefined; // non-supply or base cards
   if (raw.types.includes('Action') || raw.types.includes('Treasure') || raw.types.includes('Victory') || raw.types.includes('Night')) {
@@ -128,15 +129,20 @@ export async function build(): Promise<CardDatabase> {
     override?.add?.forEach((t) => derived.add(t));
     override?.remove?.forEach((t) => derived.delete(t));
 
+    const mechanics = new Set<Mechanic>(deriveMechanics(name, body, r.types));
+    const mechOverride = MECHANIC_OVERRIDES[name];
+    mechOverride?.add?.forEach((m) => mechanics.add(m));
+    mechOverride?.remove?.forEach((m) => mechanics.delete(m));
+
     const existing = byId.get(id);
     if (existing) {
       existing.products = [...new Set([...existing.products, ...products])];
       continue;
     }
-    byId.set(id, { id, name, kind, products, cost, types: r.types, tags: [...derived].sort() });
+    byId.set(id, { id, name, kind, products, cost, types: r.types, tags: [...derived].sort(), mechanics: [...mechanics].sort() });
   }
 
-  const unknownOverrides = Object.keys(TAG_OVERRIDES).filter((n) => !byId.has(slug(n)));
+  const unknownOverrides = [...Object.keys(TAG_OVERRIDES), ...Object.keys(MECHANIC_OVERRIDES)].filter((n) => !byId.has(slug(n)));
   if (unknownOverrides.length) throw new Error(`Overrides for unknown cards: ${unknownOverrides.join(', ')}`);
 
   const cards = [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));

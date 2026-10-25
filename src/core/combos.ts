@@ -15,7 +15,7 @@ export const COMBOS: Combo[] = [
     card: 'Gardens',
     partners: ['Workshop', 'Ironworks', 'Woodcutter', 'Hamlet', 'Market Square', 'Lurker', 'Hoard'],
     reason: 'cheap gains and +Buy bloat your deck so every Gardens is worth more',
-    weight: 6,
+    weight: 4,
   },
   {
     card: 'Great Hall',

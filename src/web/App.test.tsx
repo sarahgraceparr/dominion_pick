@@ -86,4 +86,15 @@ describe('App', () => {
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining('seed='));
     expect(await screen.findByText('Link copied')).toBeInTheDocument();
   });
+
+  it('Surprise me picks a rule-bending kingdom and keeps it in the share link', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '/?seed=plain&p=base2,adventures,plunder&l=0');
+    render(<App />);
+    await waitFor(() => expect(cards()).toHaveLength(10));
+    await user.click(screen.getByRole('button', { name: /Surprise me/ }));
+    expect(currentState().surprise).toBe(true);
+    expect(screen.getByText('✨ Surprise')).toBeInTheDocument();
+    expect(within(screen.getByRole('list', { name: 'Landscapes' })).getAllByTestId('card').length).toBeGreaterThanOrEqual(2);
+  });
 });

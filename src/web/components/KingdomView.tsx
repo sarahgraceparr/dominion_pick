@@ -2,22 +2,37 @@ import type { Card, Kingdom } from '../../core';
 import { getCard } from '../../core';
 import { CardTile } from './CardTile';
 
+/** Steps shown for a chain before the rest fold away. */
+const VISIBLE_STEPS = 5;
+
 interface Props {
   kingdom: Kingdom;
   owned: readonly string[];
   locked: ReadonlySet<string>;
   onToggleLock: (id: string) => void;
   onSwap: (id: string) => void;
+  /** generated with "Surprise me" */
+  surprise?: boolean;
 }
 
-export function KingdomView({ kingdom, owned, locked, onToggleLock, onSwap }: Props) {
+export function KingdomView({ kingdom, owned, locked, onToggleLock, onSwap, surprise = false }: Props) {
   const nameOf = (id: string) => getCard(id)?.name ?? id;
   const setupCards = kingdom.setup
     .filter((n) => n.cardId && !kingdom.extras.some((e) => e.id === n.cardId))
     .map((n) => ({ card: getCard(n.cardId!)!, note: n.title }))
     .filter((x): x is { card: Card; note: string } => !!x.card);
+  // Traits sit on a kingdom pile; show which one on that card.
+  const traitOn = new Map(kingdom.setup.filter((n) => n.targetId).map((n) => [n.targetId!, n.title]));
   const tile = (card: Card) => (
-    <CardTile key={card.id} card={card} owned={owned} locked={locked.has(card.id)} onToggleLock={onToggleLock} onSwap={onSwap} />
+    <CardTile
+      key={card.id}
+      card={card}
+      owned={owned}
+      locked={locked.has(card.id)}
+      onToggleLock={onToggleLock}
+      onSwap={onSwap}
+      note={traitOn.get(card.id)}
+    />
   );
 
   return (
@@ -31,7 +46,8 @@ export function KingdomView({ kingdom, owned, locked, onToggleLock, onSwap }: Pr
           <span className="score-label">fun score</span>
         </div>
       </div>
-      <ul className="chips" aria-label="Strategies">
+      <ul className="chips" aria-label="Viable strategies">
+        {surprise && <li className="chip-surprise">✨ Surprise</li>}
         {kingdom.score.archetypes.map((a) => (
           <li key={a}>{a}</li>
         ))}
@@ -81,9 +97,30 @@ export function KingdomView({ kingdom, owned, locked, onToggleLock, onSwap }: Pr
       {kingdom.synergies.length > 0 ? (
         <ul className="notes synergies">
           {kingdom.synergies.map((s) => (
-            <li key={s.reason}>
-              {s.reason}
-              <span className="visually-hidden"> ({s.cards.map(nameOf).join(', ')})</span>
+            <li key={s.reason} className={s.kind === 'chain' ? 'chain' : undefined}>
+              {s.steps ? <strong>{s.reason}</strong> : s.reason}
+              {s.loop && <span className="loop-badge">repeats</span>}
+              {s.steps ? (
+                <>
+                  <ol>
+                    {s.steps.slice(0, VISIBLE_STEPS).map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  {s.steps.length > VISIBLE_STEPS && (
+                    <details className="more-steps">
+                      <summary>{s.steps.length - VISIBLE_STEPS} more interactions</summary>
+                      <ol start={VISIBLE_STEPS + 1}>
+                        {s.steps.slice(VISIBLE_STEPS).map((step) => (
+                          <li key={step}>{step}</li>
+                        ))}
+                      </ol>
+                    </details>
+                  )}
+                </>
+              ) : (
+                <span className="visually-hidden"> ({s.cards.map(nameOf).join(', ')})</span>
+              )}
             </li>
           ))}
         </ul>

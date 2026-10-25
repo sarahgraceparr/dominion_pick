@@ -34,6 +34,8 @@ export const generateRequestSchema = z
     attacks: z.enum(['none', 'some', 'any']).default('any'),
     allowComplex: z.boolean().default(true),
     maxProducts: z.number().int().min(0).max(10).default(0),
+    /** favour rule-bending landscapes and unusual combos */
+    surprise: z.boolean().default(false),
     locked: z.array(cardId).max(14).default([]),
     banned: z.array(cardId).max(300).default([]),
   })

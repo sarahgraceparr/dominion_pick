@@ -1,4 +1,4 @@
-import type { Tag } from '../../src/core/types';
+import type { Mechanic, Tag } from '../../src/core/types';
 
 /**
  * Heuristically classifies a card from its rules text and types.
@@ -102,4 +102,43 @@ function maxNumber(text: string, re: RegExp): number {
   let max = 0;
   for (const m of text.matchAll(re)) max = Math.max(max, Number(m[1]));
   return max;
+}
+
+/**
+ * Derives producer/reactor mechanics (see MECHANICS in src/core/types.ts)
+ * from the full card text, including the below-the-line abilities.
+ */
+export function deriveMechanics(name: string, rawText: string, types: string[]): Mechanic[] {
+  const text = normalize(rawText);
+  const above = text.split(' || ')[0] ?? '';
+  const out = new Set<Mechanic>();
+
+  if (/trash an action( card)? (from your hand|you have in play)/.test(text)) out.add('trashAction');
+  if (/trash a (copper|treasure|silver)( card)? from your hand|trash a treasure\b/.test(text)) out.add('trashTreasure');
+  const trashAny =
+    /trash (a card|up to \d+ cards?|any number of cards|\d+ cards?)( from your hand| other than)/.test(text) ||
+    /trash a card from your hand/.test(text) ||
+    /you may trash a card\b/.test(text) ||
+    /trash and\/or discard/.test(text);
+  if (trashAny) out.add('trashAny');
+  if (/\btrash this\b/.test(above)) out.add('trashSelf');
+
+  if (/\bgain (a|an|\d+) loots?\b/.test(text)) out.add('gainLoot');
+  if (/\bgain a gold\b/.test(text)) out.add('gainGold');
+  if (/gain (a|\d+) ruins/.test(text) || types.includes('Looter')) out.add('selfJunk');
+  const own = name.toLowerCase();
+  if (text.includes(`gain a ${own}`) || text.includes(`gain an ${own}`) || /gain a copy of this/.test(text)) out.add('selfReplicate');
+  if (/(^|[.:;!] |\bmay |\bthen |\byou )discard (any number of|\d+|a|an|up to \d+|one|two)\b/.test(above)) out.add('discards');
+  if (/per (1 )?coins? it costs|per coin it costs|equal to its cost|per 2 coins it costs/.test(text)) out.add('refund');
+  if (/from the trash/.test(text)) out.add('fromTrash');
+  if (/\+[2-9] buys/.test(text)) out.add('manyBuys');
+
+  if (/when you trash this/.test(text)) out.add('onTrashSelf');
+  if (/when you trash this, put it into your hand/.test(text)) out.add('returnsToHand');
+  if (/when one of your cards is trashed|when another player trashes|when you trash (a|another|any)\b/.test(text)) out.add('onTrashAny');
+  if (/gains? a treasure costing 5 coins? or more/.test(text)) out.add('onGainTreasure5');
+  if (/when you discard this(?! from play)/.test(text)) out.add('onDiscard');
+  if (/per type it has/.test(text)) out.add('typeCount');
+
+  return [...out].sort();
 }

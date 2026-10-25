@@ -11,16 +11,19 @@ export function App() {
   const [locked, setLocked] = useState<Set<string>>(() => new Set(initial.current?.locked));
   const [banned, setBanned] = useState<string[]>(() => initial.current?.banned ?? []);
   const [error, setError] = useState('');
+  const [surprise, setSurprise] = useState(false);
   const [toast, setToast] = useState('');
   const firstVisit = useRef(!hasStoredSettings() && !initial.current);
 
   // Kingdoms are generated entirely on the device; the seed makes them reproducible from a link.
-  const generate = useCallback((opts: { seed?: string; locked: string[]; banned: string[]; settings: Settings }) => {
+  const generate = useCallback((opts: { seed?: string; locked: string[]; banned: string[]; settings: Settings; surprise?: boolean }) => {
     try {
       const seed = opts.seed ?? randomSeed();
-      setKingdom(generateKingdom({ ...opts.settings, seed, locked: opts.locked, banned: opts.banned }));
+      const surprise = opts.surprise ?? false;
+      setKingdom(generateKingdom({ ...opts.settings, seed, locked: opts.locked, banned: opts.banned, surprise }));
+      setSurprise(surprise);
       setError('');
-      const query = toQuery({ settings: opts.settings, seed, locked: opts.locked, banned: opts.banned });
+      const query = toQuery({ settings: opts.settings, seed, locked: opts.locked, banned: opts.banned, surprise });
       window.history.replaceState(null, '', `?${query}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong');
@@ -30,7 +33,7 @@ export function App() {
   // Show a kingdom straight away: the shared one from the URL, or a fresh pick.
   useEffect(() => {
     const shared = initial.current;
-    generate({ seed: shared?.seed, settings, locked: [...locked], banned });
+    generate({ seed: shared?.seed, settings, locked: [...locked], banned, surprise: shared?.surprise });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
@@ -39,9 +42,9 @@ export function App() {
     saveSettings(next);
   };
 
-  const pick = () => {
+  const pick = (withSurprise = false) => {
     setBanned([]);
-    generate({ settings, locked: [...locked], banned: [] });
+    generate({ settings, locked: [...locked], banned: [], surprise: withSurprise });
   };
 
   const toggleLock = (id: string) => {
@@ -58,7 +61,7 @@ export function App() {
     const nextBanned = [...new Set([...banned, id])];
     setBanned(nextBanned);
     setLocked(new Set([...locked].filter((c) => c !== id)));
-    generate({ settings: { ...settings, landscapes: kingdom.landscapes.length }, locked: keep, banned: nextBanned });
+    generate({ settings: { ...settings, landscapes: kingdom.landscapes.length }, locked: keep, banned: nextBanned, surprise });
   };
 
   const share = async () => {
@@ -85,8 +88,11 @@ export function App() {
       <main>
         <SettingsPanel settings={settings} onChange={updateSettings} defaultOpen={firstVisit.current} />
         <div className="toolbar">
-          <button type="button" className="primary" onClick={pick}>
+          <button type="button" className="primary" onClick={() => pick()}>
             {locked.size ? `Pick again (keep ${locked.size})` : 'Pick a kingdom'}
+          </button>
+          <button type="button" className="surprise" onClick={() => pick(true)} title="Rule-bending landscapes and unexpected combos">
+            ✨ Surprise me
           </button>
           <button type="button" onClick={() => void share()} disabled={!kingdom}>
             Share
@@ -100,7 +106,16 @@ export function App() {
           )}
           {toast && <p className="toast">{toast}</p>}
         </div>
-        {kingdom && <KingdomView kingdom={kingdom} owned={settings.products} locked={locked} onToggleLock={toggleLock} onSwap={swap} />}
+        {kingdom && (
+          <KingdomView
+            kingdom={kingdom}
+            owned={settings.products}
+            locked={locked}
+            onToggleLock={toggleLock}
+            onSwap={swap}
+            surprise={surprise}
+          />
+        )}
       </main>
       <footer>
         <p>

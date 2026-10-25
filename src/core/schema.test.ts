@@ -9,6 +9,7 @@ describe('generateRequestSchema', () => {
       attacks: 'any',
       allowComplex: true,
       maxProducts: 0,
+      surprise: false,
       locked: [],
       banned: [],
     });
