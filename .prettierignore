@@ -1,0 +1,7 @@
+dist
+coverage
+test-results
+playwright-report
+dev-dist
+src/core/data/cards.json
+package-lock.json
