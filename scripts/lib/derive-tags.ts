@@ -22,7 +22,11 @@ export function deriveTags(rawText: string, types: string[], cost?: { potion?: b
 
   if (actions >= 2 || (villagers && /\+\d+ villagers?/.test(text))) tags.add('village');
   if (actions === 1 && cards >= 1 && cards < 2) tags.add('cantrip');
-  if (cards >= 2 || /draw until|\+1 card per\b/.test(above)) tags.add('draw');
+  // Revealing several cards and keeping them is drawing too (Advisor, Journeyman, Hunter...).
+  const revealDraw =
+    (/(reveal|look at) the top [2-9] cards/.test(above) || /until you reveal ([2-9]|two|three) /.test(above)) &&
+    /in(to)? your hand|draw the rest/.test(above);
+  if (cards >= 2 || revealDraw || /draw until|\+1 card per\b/.test(above)) tags.add('draw');
   if (isAction && actions === 0 && !tags.has('village')) tags.add('terminal');
 
   if (/\+\d+ buys?\b/.test(text)) tags.add('plusBuy');
@@ -55,7 +59,7 @@ export function deriveTags(rawText: string, types: string[], cost?: { potion?: b
   if (/discard any number of cards|discard \d+ cards?[^.]*\+\d+ cards?|then discard \d+ cards?|draw that many/.test(above)) {
     tags.add('sifter');
   }
-  if (/(play|plays) [^.]*\b(twice|three times)\b/.test(text)) {
+  if (/(play|plays) [^.]*\b(twice|three times|again)\b|replay it/.test(text)) {
     // A Throne Room spends no extra Action of its own, so it isn't "terminal".
     tags.add('throne');
     tags.delete('terminal');
@@ -140,5 +144,32 @@ export function deriveMechanics(name: string, rawText: string, types: string[]):
   if (/when you discard this(?! from play)/.test(text)) out.add('onDiscard');
   if (/per type it has/.test(text)) out.add('typeCount');
 
+  if (m(out, 'gainGold') || /gain (a|two|2) silvers?\b|gain a treasure|reveal a treasure card from your hand\. gain a copy/.test(text)) {
+    out.add('gainTreasure');
+  }
+  if (/\bcoffers?\b/.test(text)) out.add('coffers');
+  if (/(put|putting) [^.]*(on top of|onto) your deck|back (on top )?in any order|on top in any order/.test(text)) out.add('topdeckSetup');
+  if (
+    /per treasure|play that treasure|until you reveal 2 treasure|copper produces|copper cards? from|treasures? you have in play/.test(text)
+  ) {
+    out.add('treasurePayoff');
+  }
+  if (/differently named|no duplicate|isn't a duplicate|exactly one of/.test(text)) out.add('varietyPayoff');
+  if (/(3|three) or more actions|per action card (you have )?in play|per action card revealed|action cards? they have in play/.test(text)) {
+    out.add('actionCount');
+  }
+  if (/\boverpay\b/.test(text)) out.add('overpay');
+  if (/takes? (an extra|another) turn/.test(text)) out.add('extraTurn');
+  if (/\bname a card\b/.test(text)) out.add('nameCard');
+  if (/put this (on top of|onto) your deck/.test(text)) out.add('topdeckSelf');
+  if (/\breveal\b/.test(above)) out.add('reveals');
+  if (/when something causes you to reveal this/.test(text)) out.add('onReveal');
+  if (/(action|treasure|victory) card,? \+\d (actions?|coins?|cards?)\b/.test(text)) out.add('typeBonus');
+  if (/trash the victory card and gain a victory card|trash a victory card[^.]*gain a victory/.test(text)) out.add('victoryRemodel');
+  if (/gain a duration card|duration cards? (you have )?in play/.test(text)) out.add('durationPayoff');
+  if (/when you gain an action\b/.test(text)) out.add('onGainAction');
+
   return [...out].sort();
 }
+
+const m = (set: Set<Mechanic>, mech: Mechanic) => set.has(mech);

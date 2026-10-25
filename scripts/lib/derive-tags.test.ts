@@ -82,7 +82,7 @@ describe('deriveMechanics', () => {
       'returnsToHand',
     ]);
     expect(deriveMechanics('X', '+1 Buy<line>When one of your cards is trashed, you may discard this to gain a Gold.', ['Action'])).toEqual(
-      ['gainGold', 'onTrashAny'],
+      ['gainGold', 'gainTreasure', 'onTrashAny'],
     );
     expect(deriveMechanics('X', '<line>When you discard this other than during Clean-up, gain a Gold.', ['Victory'])).toContain(
       'onDiscard',
@@ -110,5 +110,30 @@ describe('deriveMechanics', () => {
   it('marks Looters and Ruins-gainers as self-junking', () => {
     expect(deriveMechanics('X', '+5 Coin<line>When you gain this, gain 2 Ruins.', ['Action'])).toContain('selfJunk');
     expect(deriveMechanics('X', '+1 Card', ['Action', 'Looter'])).toContain('selfJunk');
+  });
+
+  it('detects the themes found in the recommended kingdoms', () => {
+    expect(deriveMechanics('X', '+1 Coin<line>When something causes you to reveal this, +1 Coffers.', ['Action'])).toEqual([
+      'coffers',
+      'onReveal',
+    ]);
+    expect(
+      deriveMechanics('X', '+1 Card<line>When you discard this from play, you may put this on top of your deck.', ['Action']),
+    ).toContain('topdeckSelf');
+    expect(deriveMechanics('X', 'Reveal the top card; if it is an Action card, +1 Action; Treasure card, +1 Coin.', ['Action'])).toContain(
+      'typeBonus',
+    );
+    expect(deriveMechanics('X', '+1 Coin per Treasure card you have in play.', ['Treasure'])).toContain('treasurePayoff');
+    expect(deriveMechanics('X', 'Worth 2 VP for every 5 differently named cards.', ['Victory'])).toContain('varietyPayoff');
+    expect(deriveMechanics('X', "If you've played 3 or more Actions this turn, +1 Card.", ['Action'])).toContain('actionCount');
+    expect(deriveMechanics('X', '<line>When you buy this, you may overpay for it.', ['Action'])).toContain('overpay');
+    expect(deriveMechanics('X', 'Take an extra turn after this one.', ['Action', 'Duration'])).toContain('extraTurn');
+    expect(deriveMechanics('X', 'Name a card. Reveal the top card of your deck.', ['Action'])).toContain('nameCard');
+    expect(deriveMechanics('X', 'This turn, when you gain an Action card, +1 VP.', ['Treasure'])).toContain('onGainAction');
+  });
+
+  it('counts revealing several cards and keeping them as draw', () => {
+    expect(deriveTags('+1 Action. Reveal the top 3 cards of your deck. Put the others into your hand.', ['Action'])).toContain('draw');
+    expect(deriveTags('Reveal the top card of your deck. If it is an Action, put it into your hand.', ['Action'])).not.toContain('draw');
   });
 });

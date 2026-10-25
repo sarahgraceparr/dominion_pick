@@ -13,6 +13,8 @@ export const TAG_OVERRIDES: Record<string, { add?: Tag[]; remove?: Tag[] }> = {
   Cellar: { remove: ['draw', 'cantrip'] },
   'Coin of the Realm': { add: ['village'] },
   Conclave: { add: ['village'] },
+  // Plays the next two Actions from your deck.
+  Golem: { add: ['throne', 'draw'], remove: ['terminal'] },
   Count: { add: ['trasher'] },
   Doctor: { add: ['trasher'] },
   Hamlet: { add: ['village', 'sifter'] },
@@ -76,4 +78,9 @@ export const MECHANIC_OVERRIDES: Record<string, { add?: Mechanic[]; remove?: Mec
   Hovel: { remove: ['onTrashSelf'] },
   // You start the game with a card from the pile Inherited is on.
   Inherited: { add: ['startsInDeck'] },
+  // Draws every Action off the top of your deck: rewards a deck full of cheap Actions.
+  'Scrying Pool': { add: ['actionCount'] },
+  // "The first time you play a Silver this turn, +1 Coin."
+  Merchant: { add: ['treasurePayoff'] },
+  "Fool's Gold": { add: ['treasurePayoff'] },
 };

@@ -220,7 +220,9 @@
     "gainer",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "onGainAction"
+   ]
   },
   {
    "id": "acting-troupe",
@@ -277,9 +279,13 @@
     "Action"
    ],
    "tags": [
+    "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "advisor",
@@ -295,8 +301,12 @@
    "types": [
     "Action"
    ],
-   "tags": [],
-   "mechanics": []
+   "tags": [
+    "draw"
+   ],
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "alchemist",
@@ -316,7 +326,10 @@
     "complex",
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSelf",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "alley",
@@ -433,7 +446,9 @@
     "terminal",
     "trasher"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "amulet",
@@ -457,6 +472,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -542,9 +558,13 @@
    ],
    "tags": [
     "cantrip",
-    "complex"
+    "complex",
+    "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "apprentice",
@@ -603,7 +623,9 @@
     "altVP",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "architects-guild",
@@ -702,7 +724,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "artificer",
@@ -723,7 +747,9 @@
     "gainer",
     "sifter"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "artisan",
@@ -743,7 +769,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "artist",
@@ -764,7 +792,9 @@
     "complex",
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "asceticism",
@@ -829,6 +859,9 @@
    ],
    "mechanics": [
     "gainGold",
+    "gainTreasure",
+    "nameCard",
+    "topdeckSetup",
     "trashSelf"
    ]
   },
@@ -868,7 +901,9 @@
     "cantrip",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "ball",
@@ -949,7 +984,8 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -1023,7 +1059,9 @@
    "tags": [
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "treasurePayoff"
+   ]
   },
   {
    "id": "banquet",
@@ -1237,7 +1275,9 @@
     "gainer",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "bazaar",
@@ -1277,7 +1317,10 @@
     "defense",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "berserker",
@@ -1383,7 +1426,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "blessed-village",
@@ -1461,8 +1506,13 @@
    "types": [
     "Action"
    ],
-   "tags": [],
-   "mechanics": []
+   "tags": [
+    "draw"
+   ],
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "border-village",
@@ -1631,7 +1681,10 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "buried-treasure",
@@ -1693,6 +1746,7 @@
     "trasher"
    ],
    "mechanics": [
+    "coffers",
     "trashAny"
    ]
   },
@@ -1717,6 +1771,7 @@
     "gainer"
    ],
    "mechanics": [
+    "durationPayoff",
     "trashSelf"
    ]
   },
@@ -1815,7 +1870,9 @@
     "economy",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "capital",
@@ -2001,9 +2058,13 @@
     "Action"
    ],
    "tags": [
+    "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "carpenter",
@@ -2044,7 +2105,8 @@
     "cantrip"
    ],
    "mechanics": [
-    "discards"
+    "discards",
+    "topdeckSetup"
    ]
   },
   {
@@ -2114,6 +2176,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -2339,7 +2402,9 @@
     "altVP",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "charlatan",
@@ -2382,7 +2447,9 @@
     "gainer",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "cheap",
@@ -2514,7 +2581,10 @@
     "draw",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "actionCount",
+    "reveals"
+   ]
   },
   {
    "id": "city-state",
@@ -2532,7 +2602,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "onGainAction"
+   ]
   },
   {
    "id": "clashes",
@@ -2556,7 +2628,9 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "varietyPayoff"
    ]
   },
   {
@@ -2660,7 +2734,9 @@
     "gainer",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "onGainAction"
+   ]
   },
   {
    "id": "colonnade",
@@ -2697,7 +2773,9 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "varietyPayoff"
    ]
   },
   {
@@ -2735,7 +2813,9 @@
    "tags": [
     "altVP"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "conspirator",
@@ -2755,7 +2835,9 @@
     "cantrip",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "actionCount"
+   ]
   },
   {
    "id": "continue",
@@ -2834,7 +2916,9 @@
    "tags": [
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "treasurePayoff"
+   ]
   },
   {
    "id": "corsair",
@@ -2902,7 +2986,8 @@
     "trasher"
    ],
    "mechanics": [
-    "discards"
+    "discards",
+    "topdeckSetup"
    ]
   },
   {
@@ -2941,7 +3026,10 @@
    "tags": [
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "courier",
@@ -2982,7 +3070,9 @@
     "plusBuy"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "reveals"
    ]
   },
   {
@@ -3003,7 +3093,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "coven",
@@ -3103,7 +3195,10 @@
     "duration",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSelf",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "crop-rotation",
@@ -3143,7 +3238,9 @@
     "draw",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "crown",
@@ -3205,7 +3302,9 @@
     "complex",
     "duration"
    ],
-   "mechanics": []
+   "mechanics": [
+    "treasurePayoff"
+   ]
   },
   {
    "id": "crystal-ball",
@@ -3359,7 +3458,8 @@
    ],
    "tags": [
     "cantrip",
-    "complex"
+    "complex",
+    "throne"
    ],
    "mechanics": []
   },
@@ -3404,7 +3504,9 @@
     "altVP",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "onGainAction"
+   ]
   },
   {
    "id": "delay",
@@ -3458,7 +3560,9 @@
     "gainer",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "demand",
@@ -3575,6 +3679,7 @@
     "trasher"
    ],
    "mechanics": [
+    "topdeckSetup",
     "trashAny"
    ]
   },
@@ -3596,7 +3701,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -3660,7 +3766,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "distant-lands",
@@ -3717,7 +3825,12 @@
     "terminal",
     "trasher"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "overpay",
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "dominate",
@@ -3797,6 +3910,7 @@
     "trasher"
    ],
    "mechanics": [
+    "coffers",
     "trashTreasure"
    ]
   },
@@ -3963,7 +4077,9 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "enchantress",
@@ -4004,7 +4120,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -4104,9 +4221,12 @@
     "Action"
    ],
    "tags": [
+    "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "exorcist",
@@ -4208,7 +4328,9 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "explorer",
@@ -4228,7 +4350,9 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "reveals"
    ]
   },
   {
@@ -4266,7 +4390,9 @@
    "tags": [
     "altVP"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "faithful-hound",
@@ -4411,7 +4537,9 @@
    "tags": [
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "farmland",
@@ -4455,7 +4583,9 @@
     "cantrip",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "overpay"
+   ]
   },
   {
    "id": "fated",
@@ -4471,7 +4601,9 @@
     "Trait"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "fawning",
@@ -4750,7 +4882,7 @@
    "tags": [
     "duration",
     "economy",
-    "terminal"
+    "throne"
    ],
    "mechanics": []
   },
@@ -4808,7 +4940,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "fools-gold",
@@ -4830,7 +4964,9 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "treasurePayoff"
    ]
   },
   {
@@ -4855,7 +4991,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "forager",
@@ -4876,7 +5014,8 @@
     "trasher"
    ],
    "mechanics": [
-    "trashAny"
+    "trashAny",
+    "varietyPayoff"
    ]
   },
   {
@@ -4912,7 +5051,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "forest-dwellers",
@@ -4928,7 +5069,9 @@
     "Ally"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "forge",
@@ -4996,7 +5139,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "fortune-hunter",
@@ -5015,7 +5160,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "fortune-teller",
@@ -5157,7 +5304,9 @@
    "tags": [
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "gang-of-pickpockets",
@@ -5343,7 +5492,8 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -5388,7 +5538,8 @@
     "plusBuy"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -5407,9 +5558,12 @@
    ],
    "tags": [
     "complex",
-    "terminal"
+    "draw",
+    "throne"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "gondola",
@@ -5448,7 +5602,9 @@
     "economy",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "goons",
@@ -5533,6 +5689,7 @@
    ],
    "mechanics": [
     "fromTrash",
+    "topdeckSetup",
     "trashAction"
    ]
   },
@@ -5589,7 +5746,10 @@
     "cantrip",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure",
+    "typeBonus"
+   ]
   },
   {
    "id": "grotto",
@@ -5646,7 +5806,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "guard-dog",
@@ -5729,7 +5891,10 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers",
+    "gainTreasure"
+   ]
   },
   {
    "id": "guildmaster",
@@ -5814,7 +5979,9 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "harbor-village",
@@ -5892,7 +6059,10 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "hasty",
@@ -5974,7 +6144,11 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "overpay",
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "herbalist",
@@ -5994,7 +6168,9 @@
     "plusBuy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "hermit",
@@ -6121,7 +6297,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -6143,7 +6320,8 @@
     "gainer"
    ],
    "mechanics": [
-    "trashSelf"
+    "trashSelf",
+    "varietyPayoff"
    ]
   },
   {
@@ -6221,8 +6399,12 @@
    "types": [
     "Action"
    ],
-   "tags": [],
-   "mechanics": []
+   "tags": [
+    "draw"
+   ],
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "hunting-grounds",
@@ -6283,7 +6465,10 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "idol",
@@ -6410,6 +6595,7 @@
     "trasher"
    ],
    "mechanics": [
+    "overpay",
     "trashAny"
    ]
   },
@@ -6600,8 +6786,10 @@
     "trasher"
    ],
    "mechanics": [
+    "reveals",
     "trashAny",
-    "trashSelf"
+    "trashSelf",
+    "varietyPayoff"
    ]
   },
   {
@@ -6621,7 +6809,10 @@
     "cantrip",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "typeBonus"
+   ]
   },
   {
    "id": "ironworks",
@@ -6642,7 +6833,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "typeBonus"
+   ]
   },
   {
    "id": "island",
@@ -6679,7 +6872,9 @@
     "Ally"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "jack-of-all-trades",
@@ -6702,6 +6897,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -6765,7 +6961,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "journeyman",
@@ -6782,9 +6980,13 @@
     "Action"
    ],
    "tags": [
+    "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "reveals"
+   ]
   },
   {
    "id": "joust",
@@ -6807,8 +7009,11 @@
     "plusBuy"
    ],
    "mechanics": [
+    "coffers",
     "gainGold",
-    "manyBuys"
+    "gainTreasure",
+    "manyBuys",
+    "varietyPayoff"
    ]
   },
   {
@@ -6849,7 +7054,9 @@
    "tags": [
     "altVP"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "kiln",
@@ -6968,7 +7175,9 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "knights",
@@ -6992,6 +7201,7 @@
    ],
    "mechanics": [
     "gainGold",
+    "gainTreasure",
     "manyBuys",
     "onTrashSelf",
     "trashAny"
@@ -7072,7 +7282,10 @@
     "duration",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSelf",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "launch",
@@ -7150,7 +7363,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "leprechaun",
@@ -7172,7 +7387,8 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -7274,7 +7490,9 @@
     "economy",
     "trasher"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "longship",
@@ -7317,6 +7535,7 @@
    ],
    "mechanics": [
     "discards",
+    "topdeckSetup",
     "trashAny"
    ]
   },
@@ -7434,7 +7653,10 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "magpie",
@@ -7453,6 +7675,7 @@
     "cantrip"
    ],
    "mechanics": [
+    "reveals",
     "selfReplicate"
    ]
   },
@@ -7473,7 +7696,10 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "mapmaker",
@@ -7490,6 +7716,7 @@
     "Reaction"
    ],
    "tags": [
+    "draw",
     "terminal"
    ],
    "mechanics": []
@@ -7618,6 +7845,7 @@
    ],
    "mechanics": [
     "gainGold",
+    "gainTreasure",
     "onTrashAny"
    ]
   },
@@ -7740,7 +7968,10 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure",
+    "overpay"
+   ]
   },
   {
    "id": "menagerie",
@@ -7759,7 +7990,10 @@
    "tags": [
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "merchant",
@@ -7779,7 +8013,9 @@
     "cantrip",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "treasurePayoff"
+   ]
   },
   {
    "id": "merchant-camp",
@@ -7798,7 +8034,9 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "merchant-guild",
@@ -7818,7 +8056,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "merchant-ship",
@@ -7930,6 +8170,7 @@
     "terminal"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashTreasure"
    ]
   },
@@ -7951,7 +8192,9 @@
     "gainer",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "mining-village",
@@ -8016,7 +8259,11 @@
     "terminal",
     "trasher"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure",
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "mirror",
@@ -8070,7 +8317,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "moat",
@@ -8323,7 +8572,9 @@
    "tags": [
     "altVP"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "mystic",
@@ -8341,7 +8592,10 @@
    "tags": [
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "reveals"
+   ]
   },
   {
    "id": "native-village",
@@ -8379,7 +8633,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "nearby",
@@ -8458,7 +8714,9 @@
    "tags": [
     "complex"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "ninja",
@@ -8504,7 +8762,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "nobles",
@@ -8546,7 +8806,9 @@
     "plusBuy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "nomads",
@@ -8627,7 +8889,9 @@
     "draw",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "old-witch",
@@ -8689,7 +8953,9 @@
    "tags": [
     "altVP"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "order-of-astrologers",
@@ -8742,7 +9008,9 @@
     "duration",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "overgrown-estate",
@@ -8827,7 +9095,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "pageant",
@@ -8845,7 +9115,9 @@
    "tags": [
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "palace",
@@ -8957,7 +9229,10 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "patron",
@@ -8977,7 +9252,10 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers",
+    "onReveal"
+   ]
   },
   {
    "id": "pawn",
@@ -9075,7 +9353,9 @@
     "costReducer",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "actionCount"
+   ]
   },
   {
    "id": "pendant",
@@ -9093,7 +9373,10 @@
    "tags": [
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "treasurePayoff",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "peril",
@@ -9152,7 +9435,9 @@
    "tags": [
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "pickaxe",
@@ -9193,7 +9478,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "pilgrimage",
@@ -9209,7 +9496,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "pillage",
@@ -9275,7 +9564,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "pirate-ship",
@@ -9381,6 +9672,7 @@
     "village"
    ],
    "mechanics": [
+    "coffers",
     "discards"
    ]
   },
@@ -9422,7 +9714,9 @@
     "cantrip",
     "complex"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "pooka",
@@ -9464,7 +9758,10 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "populate",
@@ -9520,7 +9817,9 @@
     "complex",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "practice",
@@ -9597,7 +9896,7 @@
    ],
    "tags": [
     "duration",
-    "terminal"
+    "throne"
    ],
    "mechanics": []
   },
@@ -9638,7 +9937,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "prosper",
@@ -9655,7 +9956,8 @@
    ],
    "tags": [],
    "mechanics": [
-    "gainLoot"
+    "gainLoot",
+    "varietyPayoff"
    ]
   },
   {
@@ -9674,7 +9976,10 @@
    "tags": [
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "reveals"
+   ]
   },
   {
    "id": "quarry",
@@ -9735,7 +10040,8 @@
    ],
    "mechanics": [
     "discards",
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -9759,7 +10065,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "raid",
@@ -9777,7 +10085,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "raider",
@@ -9838,7 +10148,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "onGainAction"
+   ]
   },
   {
    "id": "ratcatcher",
@@ -9883,6 +10195,7 @@
    ],
    "mechanics": [
     "onTrashSelf",
+    "reveals",
     "selfReplicate",
     "trashAny"
    ]
@@ -9924,7 +10237,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -9943,7 +10257,11 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "reveals",
+    "victoryRemodel"
+   ]
   },
   {
    "id": "receive-tribute",
@@ -9959,7 +10277,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "reckless",
@@ -10091,6 +10411,7 @@
     "trasher"
    ],
    "mechanics": [
+    "topdeckSetup",
     "trashAny"
    ]
   },
@@ -10173,7 +10494,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "ride",
@@ -10274,7 +10597,9 @@
    "tags": [
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "typeBonus"
+   ]
   },
   {
    "id": "rogue",
@@ -10383,7 +10708,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "royal-carriage",
@@ -10442,7 +10769,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "rush",
@@ -10572,7 +10901,8 @@
     "village"
    ],
    "mechanics": [
-    "trashAny"
+    "trashAny",
+    "typeBonus"
    ]
   },
   {
@@ -10589,7 +10919,9 @@
     "Action"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "sailor",
@@ -10613,6 +10945,7 @@
     "trasher"
    ],
    "mechanics": [
+    "durationPayoff",
     "trashAny"
    ]
   },
@@ -10759,7 +11092,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "scepter",
@@ -10832,8 +11167,13 @@
    "types": [
     "Action"
    ],
-   "tags": [],
-   "mechanics": []
+   "tags": [
+    "draw"
+   ],
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "scouting-party",
@@ -10852,7 +11192,8 @@
     "plusBuy"
    ],
    "mechanics": [
-    "discards"
+    "discards",
+    "topdeckSetup"
    ]
   },
   {
@@ -10876,6 +11217,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "refund",
     "trashAny"
    ]
@@ -10922,7 +11264,10 @@
     "attackDeck",
     "complex"
    ],
-   "mechanics": []
+   "mechanics": [
+    "actionCount",
+    "reveals"
+   ]
   },
   {
    "id": "sculptor",
@@ -10960,7 +11305,9 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "sea-hag",
@@ -11000,7 +11347,9 @@
    "tags": [
     "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "actionCount"
+   ]
   },
   {
    "id": "sea-witch",
@@ -11096,6 +11445,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -11143,7 +11493,8 @@
     "terminal"
    ],
    "mechanics": [
-    "discards"
+    "discards",
+    "topdeckSetup"
    ]
   },
   {
@@ -11179,9 +11530,13 @@
     "Action"
    ],
    "tags": [
-    "cantrip"
+    "cantrip",
+    "draw"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "seize-the-day",
@@ -11197,7 +11552,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "extraTurn"
+   ]
   },
   {
    "id": "sentinel",
@@ -11216,7 +11573,9 @@
     "terminal",
     "trasher"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "sentry",
@@ -11237,6 +11596,7 @@
     "trasher"
    ],
    "mechanics": [
+    "topdeckSetup",
     "trashAny"
    ]
   },
@@ -11257,7 +11617,9 @@
    "tags": [
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "sewers",
@@ -11322,7 +11684,9 @@
     "draw",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "sheepdog",
@@ -11440,7 +11804,9 @@
     "plusBuy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "silk-road",
@@ -11495,7 +11861,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "sinister-plot",
@@ -11586,7 +11954,8 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -11607,7 +11976,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "smithy",
@@ -11668,7 +12039,10 @@
     "attackCurser",
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "snowy-village",
@@ -11710,7 +12084,8 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -11751,7 +12126,7 @@
     "Action"
    ],
    "tags": [
-    "terminal"
+    "throne"
    ],
    "mechanics": []
   },
@@ -11796,7 +12171,9 @@
     "economy",
     "plusBuy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "spy",
@@ -11841,6 +12218,7 @@
    ],
    "mechanics": [
     "gainAttack",
+    "gainTreasure",
     "manyBuys",
     "onTrashSelf"
    ]
@@ -11981,6 +12359,7 @@
     "trasher"
    ],
    "mechanics": [
+    "overpay",
     "trashAny"
    ]
   },
@@ -12168,7 +12547,9 @@
     "terminal"
    ],
    "mechanics": [
-    "gainGold"
+    "coffers",
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -12341,6 +12722,8 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
+    "topdeckSetup",
     "trashTreasure"
    ]
   },
@@ -12384,7 +12767,9 @@
     "complex",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "varietyPayoff"
+   ]
   },
   {
    "id": "thief",
@@ -12446,7 +12831,9 @@
     "plusBuy",
     "throne"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "tide-pools",
@@ -12484,7 +12871,8 @@
    ],
    "tags": [],
    "mechanics": [
-    "discards"
+    "discards",
+    "topdeckSetup"
    ]
   },
   {
@@ -12612,7 +13000,10 @@
     "plusBuy"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure",
+    "reveals",
+    "topdeckSetup"
    ]
   },
   {
@@ -12673,7 +13064,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "tracker",
@@ -12696,7 +13089,9 @@
     "plusBuy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "trade",
@@ -12716,6 +13111,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -12763,6 +13159,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "refund",
     "trashAny"
    ]
@@ -12787,6 +13184,7 @@
     "trasher"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -12810,6 +13208,7 @@
     "terminal"
    ],
    "mechanics": [
+    "gainTreasure",
     "trashSelf"
    ]
   },
@@ -12896,6 +13295,7 @@
    ],
    "mechanics": [
     "gainGold",
+    "gainTreasure",
     "trashAny"
    ]
   },
@@ -12913,7 +13313,9 @@
     "Event"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "trappers-lodge",
@@ -12931,7 +13333,9 @@
    "tags": [
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "travelling-fair",
@@ -12951,7 +13355,8 @@
     "plusBuy"
    ],
    "mechanics": [
-    "manyBuys"
+    "manyBuys",
+    "topdeckSetup"
    ]
   },
   {
@@ -12973,6 +13378,7 @@
     "terminal"
    ],
    "mechanics": [
+    "topdeckSetup",
     "trashSelf"
    ]
   },
@@ -12994,7 +13400,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -13018,6 +13425,7 @@
    ],
    "mechanics": [
     "fromTrash",
+    "gainTreasure",
     "trashTreasure"
    ]
   },
@@ -13039,7 +13447,10 @@
     "cantrip",
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSelf",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "tribute",
@@ -13059,7 +13470,10 @@
     "economy",
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "typeBonus",
+    "varietyPayoff"
+   ]
   },
   {
    "id": "trickster",
@@ -13143,6 +13557,7 @@
    ],
    "mechanics": [
     "gainGold",
+    "gainTreasure",
     "onDiscard"
    ]
   },
@@ -13252,7 +13667,9 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   },
   {
    "id": "vampire",
@@ -13339,7 +13756,10 @@
    "tags": [
     "economy"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "treasurePayoff"
+   ]
   },
   {
    "id": "villa",
@@ -13422,7 +13842,9 @@
     "economy",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "coffers"
+   ]
   },
   {
    "id": "vineyard",
@@ -13478,7 +13900,10 @@
    "tags": [
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSelf",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "wandering-minstrel",
@@ -13496,7 +13921,10 @@
    "tags": [
     "village"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals",
+    "topdeckSetup"
+   ]
   },
   {
    "id": "war-chest",
@@ -13557,7 +13985,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "way-of-the-butterfly",
@@ -13623,7 +14053,9 @@
     "Way"
    ],
    "tags": [],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "way-of-the-goat",
@@ -13842,7 +14274,9 @@
     "economy",
     "gainer"
    ],
-   "mechanics": []
+   "mechanics": [
+    "topdeckSetup"
+   ]
   },
   {
    "id": "way-of-the-sheep",
@@ -13931,7 +14365,9 @@
     "gainer",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "gainTreasure"
+   ]
   },
   {
    "id": "wealthy-village",
@@ -13950,7 +14386,8 @@
     "village"
    ],
    "mechanics": [
-    "gainLoot"
+    "gainLoot",
+    "varietyPayoff"
    ]
   },
   {
@@ -13973,6 +14410,7 @@
     "terminal"
    ],
    "mechanics": [
+    "gainTreasure",
     "onDiscard"
    ]
   },
@@ -13996,7 +14434,8 @@
     "gainer"
    ],
    "mechanics": [
-    "gainGold"
+    "gainGold",
+    "gainTreasure"
    ]
   },
   {
@@ -14145,7 +14584,10 @@
    "tags": [
     "cantrip"
    ],
-   "mechanics": []
+   "mechanics": [
+    "nameCard",
+    "reveals"
+   ]
   },
   {
    "id": "witch",
@@ -14221,6 +14663,8 @@
    "mechanics": [
     "fromTrash",
     "onTrashSelf",
+    "topdeckSelf",
+    "topdeckSetup",
     "trashAny"
    ]
   },
@@ -14345,7 +14789,9 @@
     "draw",
     "terminal"
    ],
-   "mechanics": []
+   "mechanics": [
+    "reveals"
+   ]
   }
  ]
 }

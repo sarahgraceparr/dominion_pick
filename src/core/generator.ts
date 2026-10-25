@@ -1,7 +1,7 @@
 import { cardsInProducts, database, getCard, productFamily } from './cards';
 import { createRng, randomSeed, type Rng } from './rng';
 import { generateRequestSchema, type GenerateRequestInput } from './schema';
-import { scoreKingdom } from './scoring';
+import { scoreKingdom, type ScoreOptions } from './scoring';
 import { buildSetup, type SetupResult } from './setup';
 import { findSynergies } from './synergy';
 import type { Card, Kingdom, ScoreBreakdown, Synergy } from './types';
@@ -75,10 +75,7 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
       { kingdom: cards, landscapes, unusedKingdom: kingdomPool.filter((c) => !used.has(c)), allies, prophecies },
       rng,
     );
-    const synergies = findSynergies([...cards, ...landscapes, ...setup.extras, ...(setup.shelters ? SHELTERS : [])], {
-      traits: setup.traits,
-    });
-    const score = scoreKingdom(cards, landscapes, synergies, { surprise: req.surprise });
+    const { synergies, score } = evaluateKingdom({ cards, landscapes, ...setup }, { surprise: req.surprise });
     candidates.push({ cards, landscapes, setup, synergies, score });
   }
   if (candidates.length === 0) {
@@ -97,6 +94,23 @@ export function generateKingdom(input: GenerateRequestInput): Kingdom {
     synergies: [...chosen.synergies].sort((a, b) => b.weight - a.weight),
     score: chosen.score,
   };
+}
+
+/** A fixed kingdom plus the parts of its setup that change how cards interact. */
+export interface KingdomLayout {
+  cards: Card[];
+  landscapes: Card[];
+  /** Ally / Prophecy */
+  extras?: Card[];
+  shelters?: boolean;
+  traits?: { trait: Card; target: Card }[];
+}
+
+/** Finds the synergies of a fixed kingdom and scores it — the same evaluation the generator uses. */
+export function evaluateKingdom(layout: KingdomLayout, options: ScoreOptions = {}): { synergies: Synergy[]; score: ScoreBreakdown } {
+  const { cards, landscapes, extras = [], shelters = false, traits = [] } = layout;
+  const synergies = findSynergies([...cards, ...landscapes, ...extras, ...(shelters ? SHELTERS : [])], { traits });
+  return { synergies, score: scoreKingdom(cards, landscapes, synergies, options) };
 }
 
 function restrictFamilies(pool: Card[], locked: Card[], maxProducts: number, rng: Rng): Card[] {

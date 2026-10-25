@@ -103,6 +103,65 @@ const RULES: Rule[] = [
     m(a, 'gainAttack') && b.tags.includes('attack') && b.kind === 'kingdom'
       ? { text: `trashing ${a.name} gains you a ${b.name}`, weight: 1 }
       : undefined,
+  // Treasure decks.
+  (a, b) => {
+    if (!m(b, 'treasurePayoff')) return undefined;
+    if (m(a, 'gainTreasure')) return { text: `${a.name} fills your deck with Treasures, which ${b.name} rewards`, weight: 2 };
+    if (a.kind === 'kingdom' && a.types.includes('Treasure'))
+      return { text: `${b.name} gets more out of Treasures like ${a.name}`, weight: 2 };
+    return undefined;
+  },
+  // Collecting differently named cards.
+  (a, b) =>
+    m(b, 'varietyPayoff') &&
+    a.kind === 'kingdom' &&
+    ((a.tags.includes('gainer') && !a.tags.includes('attack')) || a.tags.includes('plusBuy'))
+      ? { text: `${a.name} helps you collect lots of differently named cards for ${b.name}`, weight: 2 }
+      : undefined,
+  // Playing lots of Actions in one turn.
+  (a, b) =>
+    m(b, 'actionCount') && isAction(a) && a.kind === 'kingdom' && !a.tags.includes('terminal') && a.cost.coins <= 4
+      ? { text: `${a.name} is a cheap extra Action that powers ${b.name}`, weight: 1 }
+      : undefined,
+  (a, b) =>
+    m(a, 'coffers') && m(b, 'overpay') ? { text: `Coffers from ${a.name} let you overpay big for ${b.name}`, weight: 3 } : undefined,
+  (a, b) =>
+    a.types.includes('Duration') && m(b, 'extraTurn')
+      ? { text: `${b.name}'s extra turn cashes in ${a.name}'s next-turn bonus straight away`, weight: 2 }
+      : undefined,
+  (a, b) =>
+    m(a, 'topdeckSelf') && m(b, 'extraTurn')
+      ? { text: `${a.name} puts itself back on top of your deck, so ${b.name}'s extra turn draws it again`, weight: 3 }
+      : undefined,
+  (a, b) =>
+    m(a, 'reveals') && m(b, 'onReveal')
+      ? { text: `${a.name} reveals cards, and each ${b.name} it reveals pays out Coffers`, weight: 2 }
+      : undefined,
+  (a, b) => {
+    if (!(m(a, 'typeBonus') || m(a, 'typeCount')) || b.kind !== 'kingdom') return undefined;
+    const types = b.types.filter((t) => ['Action', 'Treasure', 'Victory', 'Night'].includes(t));
+    return types.length >= 2 ? { text: `${a.name} pays out for each of ${b.name}'s types (${types.join('–')})`, weight: 2 } : undefined;
+  },
+  (a, b) =>
+    m(a, 'victoryRemodel') && b.kind === 'kingdom' && b.types.includes('Victory')
+      ? { text: `${a.name} climbs the Victory ladder, turning ${b.name} into something bigger`, weight: 2 }
+      : undefined,
+  (a, b) =>
+    a.kind === 'kingdom' && a.types.includes('Duration') && m(b, 'durationPayoff')
+      ? { text: `${b.name} rewards Duration cards like ${a.name}`, weight: 2 }
+      : undefined,
+  (a, b) =>
+    m(b, 'onGainAction') && a.kind === 'kingdom' && a.tags.includes('gainer') && !a.tags.includes('attack')
+      ? { text: `every Action ${a.name} gains also triggers ${b.name}`, weight: 2 }
+      : undefined,
+  (a, b) =>
+    a.tags.includes('costReducer') && b.kind === 'kingdom' && b.cost.coins >= 6
+      ? { text: `${a.name} brings ${b.name} within reach`, weight: 1 }
+      : undefined,
+  (a, b) =>
+    m(a, 'topdeckSetup') && m(b, 'nameCard')
+      ? { text: `${a.name} sets up the top of your deck so ${b.name} names the right card`, weight: 2 }
+      : undefined,
   // Starting cards (Shelters) worth trashing for profit.
   (a, b) =>
     b.kind === 'shelter' && isAction(b) && trashes(a, b) && (m(a, 'gainLoot') || m(a, 'refund') || a.tags.includes('remodeler'))

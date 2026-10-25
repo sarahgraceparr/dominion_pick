@@ -54,6 +54,9 @@ export const MECHANICS = [
   'fromTrash', // gains or plays cards from the trash
   'manyBuys', // +2 Buys or more
   'gainAttack', // gains an Attack card (Squire, when trashed)
+  'gainTreasure', // gains Silvers, Golds or copies of Treasures
+  'coffers', // produces Coffers
+  'topdeckSetup', // arranges or puts cards on top of your deck
   // reactors
   'onTrashSelf', // does something when it is trashed
   'returnsToHand', // comes back to your hand when trashed
@@ -62,6 +65,19 @@ export const MECHANICS = [
   'onDiscard', // reacts when discarded outside Clean-up
   'typeCount', // scales with the number of types a card has
   'startsInDeck', // a pile you start the game with (Inherited)
+  'treasurePayoff', // rewards Treasures in play or in your deck (Bank, Venture, Coppersmith)
+  'varietyPayoff', // rewards differently named cards (Fairgrounds, Harvest, Menagerie)
+  'actionCount', // rewards playing many Actions in a turn (Conspirator, Peddler)
+  'overpay', // can be overpaid for
+  'extraTurn', // gives an extra turn (Outpost)
+  'nameCard', // names a card and checks the top of your deck (Wishing Well, Mystic)
+  'topdeckSelf', // puts itself back on top of your deck (Treasury, Alchemist)
+  'reveals', // reveals your cards
+  'onReveal', // rewards being revealed (Patron)
+  'typeBonus', // pays out per card type (Ironmonger, Tribute)
+  'victoryRemodel', // trashes a Victory card to gain a better one (Rebuild)
+  'durationPayoff', // rewards gaining or having Durations (Sailor)
+  'onGainAction', // rewards gaining Action cards (Collection, Academy)
 ] as const;
 
 export type Mechanic = (typeof MECHANICS)[number];

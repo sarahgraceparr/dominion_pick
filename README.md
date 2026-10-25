@@ -53,6 +53,20 @@ The generator draws 300 random kingdoms that fit your settings, decides each one
 
 To stop multi-purpose cards (Squire, Fortress, Wizards…) from appearing in every kingdom, each card's number of links is capped.
 
+### Benchmark: the official recommended kingdoms
+
+The rulebooks recommend about 500 kingdoms that the designers chose to be fun. `scripts/data/recommended-kingdoms.json` lists them, imported from the MIT-licensed [dominion-randomizer](https://github.com/blakevanlan/dominion-randomizer) by `scripts/import-recommended.ts`.
+
+`npm run analyze:recommended` scores each one and compares it with random boards from the same sets. It writes [docs/recommended-kingdoms.md](docs/recommended-kingdoms.md), which gives each kingdom's score, its percentile, its viable strategies and why it should be fun.
+
+This benchmark drove several rules:
+
+- **Weights:** the cost-curve, village, attack and terminal weights match what the designers do more often than chance.
+- **Themes:** the bonus covers the themes they favour (overpay, Coffers, variety, trash rewards, Victory cards, Reserve).
+- **New rules from low scorers:** Patron with revealers, Treasury with Outpost, Ironmonger with Action–Victory cards, Rebuild with Victory cards, Coffers with overpay, cost reducers with expensive cards, and Sailor with Durations.
+
+A test fails if the median recommended kingdom drops below the 68th percentile.
+
 ### Surprise me
 
 **✨ Surprise me** uses at least two landscapes, allows complex mechanics, doubles the bonus for chains that run through landscapes, and rewards unusual card types (Night, Reserve, Traits, Ways, Projects, Omens…).

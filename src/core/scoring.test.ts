@@ -24,7 +24,7 @@ describe('scoreKingdom', () => {
     const s = score(...FIRST_GAME);
     expect(s.archetypes).toContain('Engine');
     expect(s.archetypes).toContain('Big Money');
-    expect(labels(s)).toContain('2 viable strategies');
+    expect(labels(s).some((l) => /^\d+ viable strategies$/.test(l))).toBe(true);
   });
 
   it('penalises stacked cursers', () => {

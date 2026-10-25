@@ -84,6 +84,29 @@ describe('fun examples', () => {
     expect(chainWith(findSynergies([card('Peril')]), 'Peril', 'Necropolis')).toBeUndefined();
   });
 
+  // From the official recommended kingdoms (scripts/data/recommended-kingdoms.json).
+  it('Stargazing: revealing cards pays Patron', () => {
+    const s = chainWith(findSynergies([card('Sage'), card('Patron')]), 'Sage', 'Patron');
+    expect(s?.reason).toMatch(/Sage reveals cards, and each Patron it reveals pays out Coffers/);
+  });
+
+  it('Repetition: Treasury comes back for the Outpost turn', () => {
+    const s = chainWith(findSynergies([card('Treasury'), card('Outpost')]), 'Treasury', 'Outpost');
+    expect(allText(s)).toMatch(/Treasury puts itself back on top of your deck, so Outpost's extra turn draws it again/);
+  });
+
+  it('Prophecy: Ironmonger pays twice for Action–Victory cards, Rebuild climbs Victory cards', () => {
+    const text = allText(chainWith(findSynergies(['Ironmonger', 'Great Hall', 'Rebuild'].map(card)), 'Ironmonger', 'Great Hall'));
+    expect(text).toMatch(/Ironmonger pays out for each of Great Hall's types \(Action–Victory\)/);
+    expect(text).toMatch(/Rebuild climbs the Victory ladder/);
+  });
+
+  it('Quarrymen: Coffers fund overpaying, cost reduction reaches the expensive cards', () => {
+    const text = findSynergies(['Baker', 'Stonemason', 'Quarry', 'Expand'].map(card)).map(allText).join(' | ');
+    expect(text).toMatch(/Coffers from Baker let you overpay big for Stonemason/);
+    expect(text).toMatch(/Quarry brings Expand within reach/);
+  });
+
   it.each([
     ['Peril combo', ['Peril', 'Fortress', 'Market Square', 'Squire', 'Cutthroat']],
     ['Rats + Crucible', ['Rats', 'Crucible']],
