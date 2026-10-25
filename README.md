@@ -67,6 +67,21 @@ This benchmark drove several rules:
 
 A test fails if the median recommended kingdom drops below the 68th percentile.
 
+### Playtests
+
+`docs/playtests/` holds six simulated games: three kingdoms, each at 2 and 4 players, played by scripted bot players with a deterministic shuffler. A separate "funmaxer" reviewer judged how fun each game was. It rewarded plans coming together, big turns and surprises, and penalised dead turns, stalls and one-sided games. It then compared its verdict with the static score.
+
+The static scorer had ranked the three kingdoms roughly backwards. That led to these rules:
+
+- a self-topdecking card plus an extra turn counts as a repeatable loop (a Combo);
+- strong terminal money such as Militia counts as a Big Money strategy;
+- "Engine" needs a village players can reach early and real draw;
+- an uncontested alt-VP rush is penalised, more so when cursers feed it;
+- each chain's weight is capped;
+- boards that can produce big turns earn a "big-turn potential" bonus.
+
+These games are evidence, not proof: bots play imperfectly, and three kingdoms are a small sample. Every change was therefore checked against the recommended-kingdoms benchmark.
+
 ### Emphasize
 
 Under **Your sets & options → Emphasize**, players can ask for one or more play styles (`src/core/emphasis.ts`):

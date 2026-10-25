@@ -107,6 +107,54 @@ describe('fun examples', () => {
     expect(text).toMatch(/Quarry brings Expand within reach/);
   });
 
+  // From simulated playtests judged by the "funmaxer" (docs/playtests/).
+  describe('playtest findings', () => {
+    const REPETITION = [
+      'Festival',
+      'Harbinger',
+      'Militia',
+      'Workshop',
+      'Caravan',
+      'Explorer',
+      'Outpost',
+      'Pearl Diver',
+      'Pirate Ship',
+      'Treasury',
+    ];
+    const SIZE_DISTORTION = [
+      'Artisan',
+      'Bandit',
+      'Bureaucrat',
+      'Chapel',
+      'Festival',
+      'Gardens',
+      'Sentry',
+      'Throne Room',
+      'Witch',
+      'Workshop',
+    ];
+    const scored = (names: string[]) => {
+      const k = names.map(card);
+      return scoreKingdom(k, [], findSynergies(k));
+    };
+
+    it('Treasury + Outpost is a repeatable loop and counts as a Combo; Militia money is a real alternative', () => {
+      const s = scored(REPETITION);
+      expect(s.archetypes).toEqual(expect.arrayContaining(['Combo', 'Big Money']));
+      expect(s.parts.find((p) => p.label === 'Big-turn potential')!.value).toBeGreaterThan(0);
+    });
+
+    it('an uncontested Gardens rush fed by cursers is marked one-sided', () => {
+      const s = scored(SIZE_DISTORTION);
+      expect(s.parts.map((p) => p.label)).toContain('One-sided alt-VP rush');
+      expect(s.archetypes).not.toContain('Engine'); // Festival at $5 is the only village
+    });
+
+    it('the playtests preferred Repetition to Size Distortion, and so does the scorer', () => {
+      expect(scored(REPETITION).total).toBeGreaterThan(scored(SIZE_DISTORTION).total);
+    });
+  });
+
   it.each([
     ['Peril combo', ['Peril', 'Fortress', 'Market Square', 'Squire', 'Cutthroat']],
     ['Rats + Crucible', ['Rats', 'Crucible']],

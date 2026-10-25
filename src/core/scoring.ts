@@ -51,6 +51,25 @@ export interface ScoreOptions {
 }
 
 /**
+ * How likely the board is to produce memorable big turns (several Provinces,
+ * a burst of gains or VP), the moments playtesters enjoyed most.
+ */
+function bigTurnPotential(kingdom: readonly Card[], landscapes: readonly Card[]): number {
+  const all = [...kingdom, ...landscapes];
+  const mech = (c: Card, m: Card['mechanics'][number]) => c.mechanics.includes(m);
+  const signals = [
+    all.some((c) => mech(c, 'extraTurn')),
+    all.some((c) => mech(c, 'topdeckSelf')),
+    // +Buy on a card that also brings real money, or +2 Buys.
+    kingdom.some((c) => has(c, 'plusBuy') && (mech(c, 'manyBuys') || (has(c, 'economy') && c.cost.coins >= 5))),
+    // Several gains a turn: a +Buy-fuelled gaining Event, or gainers with lots of +Buy.
+    landscapes.some((l) => l.types.includes('Event') && has(l, 'gainer')) && all.some((c) => has(c, 'plusBuy')),
+    kingdom.some((c) => isPureVictory(c) && has(c, 'altVP')),
+  ].filter(Boolean).length;
+  return Math.min(signals, 3) * 3;
+}
+
+/**
  * Which broad strategies look viable on this board. A kingdom where several
  * compete gives players real choices.
  */
@@ -59,12 +78,17 @@ export function viableStrategies(kingdom: readonly Card[], landscapes: readonly 
   const out: string[] = [];
   const any = (cards: readonly Card[], pred: (c: Card) => boolean) => cards.some(pred);
 
-  if (
-    any(kingdom, (c) => (has(c, 'draw') && has(c, 'terminal') && c.cost.coins >= 4) || (c.types.includes('Treasure') && c.cost.coins >= 5))
-  ) {
-    out.push('Big Money');
-  }
-  if (any(all, (c) => has(c, 'village')) && any(all, (c) => has(c, 'draw')) && any(all, (c) => has(c, 'plusBuy') || has(c, 'gainer'))) {
+  // Big Money needs a strong terminal (draw, or money like Militia) or a good Treasure.
+  const bigMoneyCard = (c: Card) =>
+    (has(c, 'terminal') && c.cost.coins >= 4 && (has(c, 'draw') || has(c, 'economy'))) ||
+    (c.types.includes('Treasure') && c.cost.coins >= 5);
+  if (any(kingdom, bigMoneyCard)) out.push('Big Money');
+  // An engine needs a village the deck can reach early (or several) and real draw.
+  const villages = all.filter((c) => has(c, 'village'));
+  const reachableVillage = villages.some((c) => c.cost.coins <= 4) || villages.length >= 2;
+  const draw = all.filter((c) => has(c, 'draw'));
+  const realDraw = draw.length >= 2 || draw.some((c) => !has(c, 'attack'));
+  if (reachableVillage && realDraw && any(all, (c) => has(c, 'plusBuy') || has(c, 'gainer'))) {
     out.push('Engine');
   }
   if (synergies.some((s) => s.kind === 'chain' && (s.loop || s.weight >= 15))) out.push('Combo');
@@ -126,6 +150,12 @@ export function scoreKingdom(
 
   const strategies = viableStrategies(kingdom, landscapes, synergies);
   add(`${strategies.length} viable strateg${strategies.length === 1 ? 'y' : 'ies'}`, STRATEGY_POINTS[Math.min(strategies.length, 6)]!);
+  // Playtests: a Gardens rush with nothing to race it is a one-sided game,
+  // and cursers feed the rusher's deck size.
+  if (strategies.includes('Alt-VP') && !strategies.includes('Engine') && !strategies.includes('Combo')) {
+    add('One-sided alt-VP rush', cursers > 0 ? -8 : -5);
+  }
+  add('Big-turn potential', bigTurnPotential(kingdom, landscapes));
 
   const themes = THEMES.filter((t) => count(all, t.matches) >= (t.label === 'Overpay' ? 2 : 3));
   add(themes.length ? `Theme: ${themes.map((t) => t.label).join(', ')}` : 'Theme', Math.min(themes.length, 2) * 4);

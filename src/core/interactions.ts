@@ -143,7 +143,7 @@ const RULES: Rule[] = [
       : undefined,
   (a, b) =>
     m(a, 'topdeckSelf') && m(b, 'extraTurn')
-      ? { text: `${a.name} puts itself back on top of your deck, so ${b.name}'s extra turn draws it again`, weight: 3 }
+      ? { text: `${a.name} puts itself back on top of your deck, so ${b.name}'s extra turn draws it again`, weight: 3, loop: true }
       : undefined,
   (a, b) =>
     m(a, 'reveals') && m(b, 'onReveal')
@@ -217,6 +217,9 @@ export function findLinks(cards: readonly Card[], ctx: InteractionContext = {}):
   return links;
 }
 
+/** Upper bound on one chain's weight. */
+const MAX_CHAIN_WEIGHT = 30;
+
 /** Cards named in a chain's title; the rest appear in its steps. */
 const MAX_TITLE_CARDS = 5;
 
@@ -277,7 +280,9 @@ export function findChains(cards: readonly Card[], ctx: InteractionContext = {})
     const headline = members.filter((c) => top.has(c));
     const loop = group.some((l) => l.loop);
     const base = group.reduce((s, l) => s + l.weight, 0);
-    const weight = base * (1 + 0.2 * (members.length - 2)) * (loop ? 1.5 : 1);
+    // Playtests showed huge chains are rarely proportionally better: a loop is
+    // still paced by the coins and Buys it costs. Throttle and cap.
+    const weight = Math.min(base * (1 + 0.15 * (members.length - 2)) * (loop ? 1.25 : 1), MAX_CHAIN_WEIGHT);
     return {
       kind: 'chain' as const,
       cards: members.map((c) => c.id),
