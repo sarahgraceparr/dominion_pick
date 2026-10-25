@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { randomSeed, type Kingdom } from '../core';
-import { requestKingdom } from './api';
+import { generateKingdom, randomSeed, type Kingdom } from '../core';
 import { KingdomView } from './components/KingdomView';
 import { SettingsPanel } from './components/SettingsPanel';
 import { fromQuery, hasStoredSettings, loadSettings, saveSettings, toQuery, type Settings } from './settings';
-
-type Status = { kind: 'idle' } | { kind: 'loading' } | { kind: 'error'; message: string };
 
 export function App() {
   const initial = useRef(fromQuery(window.location.search));
@@ -13,30 +10,27 @@ export function App() {
   const [kingdom, setKingdom] = useState<Kingdom>();
   const [locked, setLocked] = useState<Set<string>>(() => new Set(initial.current?.locked));
   const [banned, setBanned] = useState<string[]>(() => initial.current?.banned ?? []);
-  const [status, setStatus] = useState<Status>({ kind: 'idle' });
-  const [offline, setOffline] = useState(false);
+  const [error, setError] = useState('');
   const [toast, setToast] = useState('');
   const firstVisit = useRef(!hasStoredSettings() && !initial.current);
 
-  const generate = useCallback(async (opts: { seed?: string; locked: string[]; banned: string[]; settings: Settings }) => {
-    setStatus({ kind: 'loading' });
+  // Kingdoms are generated entirely on the device; the seed makes them reproducible from a link.
+  const generate = useCallback((opts: { seed?: string; locked: string[]; banned: string[]; settings: Settings }) => {
     try {
       const seed = opts.seed ?? randomSeed();
-      const result = await requestKingdom({ ...opts.settings, seed, locked: opts.locked, banned: opts.banned });
-      setKingdom(result.kingdom);
-      setOffline(result.offline);
-      setStatus({ kind: 'idle' });
+      setKingdom(generateKingdom({ ...opts.settings, seed, locked: opts.locked, banned: opts.banned }));
+      setError('');
       const query = toQuery({ settings: opts.settings, seed, locked: opts.locked, banned: opts.banned });
       window.history.replaceState(null, '', `?${query}`);
     } catch (e) {
-      setStatus({ kind: 'error', message: e instanceof Error ? e.message : 'Something went wrong' });
+      setError(e instanceof Error ? e.message : 'Something went wrong');
     }
   }, []);
 
   // Show a kingdom straight away: the shared one from the URL, or a fresh pick.
   useEffect(() => {
     const shared = initial.current;
-    void generate({ seed: shared?.seed, settings, locked: [...locked], banned });
+    generate({ seed: shared?.seed, settings, locked: [...locked], banned });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
@@ -47,7 +41,7 @@ export function App() {
 
   const pick = () => {
     setBanned([]);
-    void generate({ settings, locked: [...locked], banned: [] });
+    generate({ settings, locked: [...locked], banned: [] });
   };
 
   const toggleLock = (id: string) => {
@@ -64,7 +58,7 @@ export function App() {
     const nextBanned = [...new Set([...banned, id])];
     setBanned(nextBanned);
     setLocked(new Set([...locked].filter((c) => c !== id)));
-    void generate({ settings: { ...settings, landscapes: kingdom.landscapes.length }, locked: keep, banned: nextBanned });
+    generate({ settings: { ...settings, landscapes: kingdom.landscapes.length }, locked: keep, banned: nextBanned });
   };
 
   const share = async () => {
@@ -91,20 +85,19 @@ export function App() {
       <main>
         <SettingsPanel settings={settings} onChange={updateSettings} defaultOpen={firstVisit.current} />
         <div className="toolbar">
-          <button type="button" className="primary" onClick={pick} disabled={status.kind === 'loading'}>
-            {status.kind === 'loading' ? 'Picking…' : locked.size ? `Pick again (keep ${locked.size})` : 'Pick a kingdom'}
+          <button type="button" className="primary" onClick={pick}>
+            {locked.size ? `Pick again (keep ${locked.size})` : 'Pick a kingdom'}
           </button>
           <button type="button" onClick={() => void share()} disabled={!kingdom}>
             Share
           </button>
         </div>
         <div aria-live="polite" className="status">
-          {status.kind === 'error' && (
+          {error && (
             <p role="alert" className="error">
-              {status.message}
+              {error}
             </p>
           )}
-          {offline && <p className="offline">Offline — kingdom generated on this device.</p>}
           {toast && <p className="toast">{toast}</p>}
         </div>
         {kingdom && <KingdomView kingdom={kingdom} owned={settings.products} locked={locked} onToggleLock={toggleLock} onSwap={swap} />}

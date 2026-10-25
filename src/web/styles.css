@@ -234,7 +234,6 @@ select {
   background: color-mix(in srgb, var(--neg) 15%, transparent);
 }
 
-.offline,
 .toast {
   background: var(--chip);
 }

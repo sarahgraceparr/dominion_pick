@@ -26,8 +26,8 @@ interface Candidate {
 
 /**
  * Generates a fun kingdom. Pure and deterministic: the same request (with
- * the same seed) always yields the same kingdom, so nothing has to be stored
- * server-side to share or reproduce a result.
+ * the same seed) always yields the same kingdom, so a share link only needs
+ * to carry the seed and settings.
  */
 export function generateKingdom(input: GenerateRequestInput): Kingdom {
   const parsed = generateRequestSchema.safeParse(input);

@@ -8,7 +8,7 @@ export default defineConfig({
         test: {
           name: 'node',
           environment: 'node',
-          include: ['src/core/**/*.test.ts', 'src/server/**/*.test.ts', 'scripts/**/*.test.ts'],
+          include: ['src/core/**/*.test.ts', 'scripts/**/*.test.ts'],
         },
       },
       {
@@ -24,7 +24,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/web/main.tsx', 'src/server/index.ts', 'src/web/test-setup.ts'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/web/main.tsx', 'src/web/test-setup.ts'],
       thresholds: { lines: 85, functions: 85, branches: 75, statements: 85 },
     },
   },

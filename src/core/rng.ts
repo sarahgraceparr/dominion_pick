@@ -1,6 +1,6 @@
 /**
  * Small deterministic PRNG so a kingdom can be reproduced from its seed
- * (e.g. from a shared link) without the server storing anything.
+ * (e.g. from a shared link) without storing anything.
  */
 export interface Rng {
   /** float in [0, 1) */

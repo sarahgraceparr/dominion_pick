@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 const kingdomCards = (page: import('@playwright/test').Page) => page.getByRole('list', { name: 'Kingdom cards' }).getByTestId('card');
 
 test('picks a kingdom and reproduces it from the share link', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('');
   await expect(kingdomCards(page)).toHaveCount(10);
   await expect(page.getByTestId('score')).toBeVisible();
 
@@ -17,7 +17,7 @@ test('picks a kingdom and reproduces it from the share link', async ({ page }) =
 });
 
 test('lock and swap', async ({ page }) => {
-  await page.goto('/?seed=e2e&p=base2,intrigue2&l=0&a=any&c=1&m=0');
+  await page.goto('?seed=e2e&p=base2,intrigue2&l=0&a=any&c=1&m=0');
   await expect(kingdomCards(page)).toHaveCount(10);
   const names = await kingdomCards(page).getByRole('link').allTextContents();
 
@@ -33,7 +33,7 @@ test('lock and swap', async ({ page }) => {
 });
 
 test('settings filter the sets used', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('');
   // First visit: the settings panel starts open so new players pick their sets.
   await page.getByRole('button', { name: 'Clear' }).click();
   await page.getByRole('checkbox', { name: /^Seaside\s*2nd Edition$/ }).check();
@@ -44,7 +44,7 @@ test('settings filter the sets used', async ({ page }) => {
 });
 
 test('works offline after the first visit (PWA)', async ({ page, context }) => {
-  await page.goto('/');
+  await page.goto('');
   await expect(kingdomCards(page)).toHaveCount(10);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload(); // let the service worker take control
@@ -53,16 +53,22 @@ test('works offline after the first visit (PWA)', async ({ page, context }) => {
   await context.setOffline(true);
   await page.reload();
   await expect(kingdomCards(page)).toHaveCount(10);
-  await expect(page.getByText(/Offline/)).toBeVisible();
+  await page.getByRole('button', { name: /Pick/ }).click();
+  await expect(kingdomCards(page)).toHaveCount(10);
 });
 
-test('serves a valid web app manifest and security headers', async ({ request }) => {
-  const manifest = await request.get('/manifest.webmanifest');
+test('serves a valid web app manifest and a Content-Security-Policy', async ({ page, request }) => {
+  const manifest = await request.get('manifest.webmanifest');
   expect(manifest.ok()).toBe(true);
   const json = await manifest.json();
   expect(json.display).toBe('standalone');
   expect(json.icons.map((i: { sizes: string }) => i.sizes)).toContain('512x512');
 
-  const res = await request.get('/');
-  expect(res.headers()['content-security-policy']).toContain("default-src 'self'");
+  const violations: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && violations.push(m.text()));
+  await page.goto('');
+  await expect(kingdomCards(page)).toHaveCount(10);
+  const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+  expect(csp).toContain("default-src 'self'");
+  expect(violations).toEqual([]);
 });

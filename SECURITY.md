@@ -2,4 +2,4 @@
 
 Please report vulnerabilities privately via GitHub's "Report a vulnerability" (Security tab) rather than a public issue. We aim to respond within a week.
 
-The app stores no user data server-side; the main concerns are input handling on `/api/v1/kingdoms`, HTTP security headers, and dependency vulnerabilities.
+Dominion Pick is a static site with no server and no data collection. The main concerns are handling of untrusted share-link parameters, the Content-Security-Policy, and dependency vulnerabilities.

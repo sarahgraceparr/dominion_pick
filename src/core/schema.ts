@@ -9,9 +9,9 @@ const cardId = z
   .refine((id) => getCard(id) !== undefined, { message: 'unknown card' });
 
 /**
- * Request schema shared by the API server and the client. Strict: unknown
- * fields are rejected, and every list is bounded so a request can't make the
- * server do unbounded work.
+ * Request schema for the generator. Share links and saved settings are
+ * untrusted input, so it is strict: unknown fields are rejected, and every
+ * list is bounded so a crafted link can't make the page do unbounded work.
  */
 export const generateRequestSchema = z
   .object({
